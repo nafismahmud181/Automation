@@ -13,6 +13,11 @@ class BasePage:
         """Find element with explicit wait"""
         return self.wait.until(EC.visibility_of_element_located(locator))
     
+    def find_elements(self, locator: tuple):
+        """Find multiple elements"""
+        return self.driver.find_elements(*locator)
+
+    
     def find_clickable_element(self, locator: tuple):
         """Find clickable element with explicit wait"""
         return self.wait.until(EC.element_to_be_clickable(locator))

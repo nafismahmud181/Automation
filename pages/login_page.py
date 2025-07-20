@@ -1,42 +1,32 @@
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
 from config.config import config
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class LoginPage(BasePage):
-    # Locators - UPDATE THESE TO MATCH YOUR APPLICATION
-    # Example locator options:
+    # Existing locators
+    USERNAME_INPUT = (By.XPATH, "//input[@id='login-username']")
+    PASSWORD_INPUT = (By.XPATH, "//input[@id='login-password']")
+    LOGIN_BUTTON = (By.XPATH, "//button[normalize-space()='Sign in']")
     
-    # Option 1: Using ID (most reliable)
-    USERNAME_INPUT = (By.ID, "username")  # Change "username" to your field's ID
-    PASSWORD_INPUT = (By.ID, "password")  # Change "password" to your field's ID
-    LOGIN_BUTTON = (By.ID, "login-button")  # Change to your button's ID
+    # Error message locators
+    ERROR_MESSAGE = (By.XPATH, "//div[@class='alert-body']//p")
+
+    # Page title locator
+    PAGE_TITLE = (By.XPATH, "//h2[normalize-space()='Welcome to Data Definitions Editor']")
     
-    # Option 2: Using XPath (if no ID available)
-    # USERNAME_INPUT = (By.XPATH, "//input[@name='username']")
-    # PASSWORD_INPUT = (By.XPATH, "//input[@type='password']")
-    # LOGIN_BUTTON = (By.XPATH, "//button[@type='submit']")
-    # LOGIN_BUTTON = (By.XPATH, "//input[@value='Login']")
+    # Field validation error locators
+    USERNAME_VALIDATION_ERROR = (By.XPATH, "//small[normalize-space()='The Username field is required']")
+    PASSWORD_VALIDATION_ERROR = (By.XPATH, "//small[normalize-space()='The Password field is required']")
     
-    # Option 3: Using CSS Selector
-    # USERNAME_INPUT = (By.CSS_SELECTOR, "input[name='username']")
-    # PASSWORD_INPUT = (By.CSS_SELECTOR, "input[type='password']")
-    # LOGIN_BUTTON = (By.CSS_SELECTOR, "button.login-btn")
+    # Generic validation error locators (more flexible)
+    USERNAME_ERROR_GENERIC = (By.XPATH, "//input[@id='login-username']/following-sibling::small[@class='text-danger']")
+    PASSWORD_ERROR_GENERIC = (By.XPATH, "//input[@id='login-password']/../..//small[@class='text-danger']")
     
-    # Option 4: Using Name attribute
-    # USERNAME_INPUT = (By.NAME, "username")
-    # PASSWORD_INPUT = (By.NAME, "password")
-    
-    # Other elements - update these too
-    REMEMBER_ME_CHECKBOX = (By.ID, "remember-me")
-    # Alternative: REMEMBER_ME_CHECKBOX = (By.XPATH, "//input[@type='checkbox']")
-    
-    FORGOT_PASSWORD_LINK = (By.LINK_TEXT, "Forgot Password?")
-    # Alternative: FORGOT_PASSWORD_LINK = (By.XPATH, "//a[contains(text(), 'Forgot')]")
-    
-    ERROR_MESSAGE = (By.CLASS_NAME, "error-message")
-    # Alternative: ERROR_MESSAGE = (By.XPATH, "//div[@class='error-message']")
-    # Alternative: ERROR_MESSAGE = (By.CSS_SELECTOR, ".error-message")
+    # All validation errors at once
+    ALL_VALIDATION_ERRORS = (By.XPATH, "//small[@class='text-danger']")
     
     SUCCESS_MESSAGE = (By.CLASS_NAME, "success-message")
     LOADING_SPINNER = (By.CLASS_NAME, "loading-spinner")
@@ -61,31 +51,60 @@ class LoginPage(BasePage):
         """Click login button"""
         self.click(self.LOGIN_BUTTON)
     
-    def check_remember_me(self):
-        """Check remember me checkbox"""
-        checkbox = self.find_element(self.REMEMBER_ME_CHECKBOX)
-        if not checkbox.is_selected():
-            checkbox.click()
-    
-    def click_forgot_password(self):
-        """Click forgot password link"""
-        self.click(self.FORGOT_PASSWORD_LINK)
-    
     def get_error_message(self) -> str:
-        """Get error message text"""
+        """Get general error message text (for invalid credentials)"""
         if self.is_element_present(self.ERROR_MESSAGE):
             return self.get_text(self.ERROR_MESSAGE)
         return ""
     
-    def get_success_message(self) -> str:
-        """Get success message text"""
-        if self.is_element_present(self.SUCCESS_MESSAGE):
-            return self.get_text(self.SUCCESS_MESSAGE)
+    def get_username_validation_error(self) -> str:
+        """Get username field validation error"""
+        if self.is_element_present(self.USERNAME_VALIDATION_ERROR):
+            return self.get_text(self.USERNAME_VALIDATION_ERROR)
         return ""
     
-    def is_loading_spinner_visible(self) -> bool:
-        """Check if loading spinner is visible"""
-        return self.is_element_present(self.LOADING_SPINNER, timeout=2)
+    def get_password_validation_error(self) -> str:
+        """Get password field validation error"""
+        if self.is_element_present(self.PASSWORD_VALIDATION_ERROR):
+            return self.get_text(self.PASSWORD_VALIDATION_ERROR)
+        return ""
+    
+    def get_all_validation_errors(self) -> list:
+        """Get all validation error messages"""
+        errors = []
+        elements = self.find_elements(self.ALL_VALIDATION_ERRORS)
+        for element in elements:
+            errors.append(element.text)
+        return errors
+
+    
+    def has_validation_errors(self) -> bool:
+        """Check if any validation errors are present"""
+        return len(self.get_all_validation_errors()) > 0
+    
+    def get_any_error_message(self) -> str:
+        """Get any error message (validation or general)"""
+        # Check validation errors first
+        validation_errors = self.get_all_validation_errors()
+        if validation_errors:
+            return "; ".join(validation_errors)
+        
+        # Check general error message
+        return self.get_error_message()
+    
+    def get_page_title_element_text(self) -> str:
+        """Get the page title from h2 element"""
+        if self.is_element_present(self.PAGE_TITLE):
+            return self.get_text(self.PAGE_TITLE)
+        return ""
+    
+    def get_page_title(self) -> str:
+        """Get browser page title (from <title> tag)"""
+        return self.driver.title
+    
+    def get_page_heading(self) -> str:
+        """Get page heading text"""
+        return self.get_page_title_element_text()
     
     def login(self, username: str, password: str, remember_me: bool = False):
         """Perform complete login action"""
@@ -98,20 +117,10 @@ class LoginPage(BasePage):
         self.click_login_button()
     
     def is_login_successful(self) -> bool:
-        """Check if login was successful by checking URL change or success message"""
         try:
-            # Wait for either success message or URL change
-            return (self.is_element_present(self.SUCCESS_MESSAGE) or 
-                   "dashboard" in self.get_current_url().lower())
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, "//h2[normalize-space()='Transactions']"))
+            )
+            return True
         except:
             return False
-    
-    def get_username_field_value(self) -> str:
-        """Get current value in username field"""
-        element = self.find_element(self.USERNAME_INPUT)
-        return element.get_attribute("value")
-    
-    def get_password_field_value(self) -> str:
-        """Get current value in password field"""
-        element = self.find_element(self.PASSWORD_INPUT)
-        return element.get_attribute("value")

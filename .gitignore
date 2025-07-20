@@ -1,0 +1,14 @@
+# Ignore failed test screenshots
+screenshots/
+
+# Ignore reports
+reports/
+
+# Ignore virtual environment
+venv/
+
+# Ignore Python cache files
+__pycache__/
+
+# Ignore Report HTML files
+*.html

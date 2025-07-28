@@ -1,10 +1,17 @@
 from dataclasses import dataclass
 from typing import List, Dict
+import os
 
 @dataclass
 class LoginCredentials:
     username: str
     password: str
+    expected_result: str
+
+@dataclass
+class UploadData:
+    file_path: str
+    file_name: str
     expected_result: str
 
 class TestData:
@@ -37,3 +44,14 @@ class TestData:
         LoginCredentials("<script>alert('xss')</script>", "password", "xss_attempt"),
         LoginCredentials("user@example.com", "<img src=x onerror=alert(1)>", "xss_attempt"),
     ]
+    
+    # Upload test data
+    BATCH_UPLOAD_FILE = UploadData(
+        file_path=os.path.join(os.getcwd(), "assets", "20250723.U04246.zip"),
+        file_name="20250723.U04246.zip",
+        expected_result="success"
+    )
+    
+    # Search test data
+    VALID_SEARCH_TEXT = "20250721.00005"
+    INVALID_SEARCH_TEXT = "InvalidSearchThatShouldNotExist123!@#"

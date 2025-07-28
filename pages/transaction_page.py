@@ -9,9 +9,10 @@ from selenium.common.exceptions import TimeoutException
 
 class TransactionPage(BasePage):
     # Search Locators
-    SEARCH_INPUT = (By.XPATH, "//*[@data-id='email-batches search id']")
+    ID_SEARCH_INPUT = (By.XPATH, "//*[@data-id='email-batches search id']")
     SEARCH_RESULTS = (By.XPATH, "//div[@class='search-results']")
     NO_RESULTS_MESSAGE = (By.XPATH, "//div[contains(text(),'No results found')]")
+    CLEAR_SEARCH_BUTTON = (By.XPATH, "//button[@data-id='email-batch-clearSearch']")
     
     # Upload Locators
     UPLOAD_BUTTON = (By.XPATH, "//button[normalize-space()='Upload Transaction']")
@@ -23,13 +24,26 @@ class TransactionPage(BasePage):
 
     def __init__(self, driver):
         super().__init__(driver)
-        self.url = f"{config.BASE_URL}/"  # Main page URL after successful login
+        # Main page URL after successful login
+        self.url = f"{config.BASE_URL}/"  
 
-    def search_text(self, text: str):
-        """
-        Enter text in search box and press Enter
-        """
-        search_box = self.find_element(self.SEARCH_INPUT)
+    def search_by_id(self, text: str):
+        wait = WebDriverWait(self.driver, 10)
+        search_box = wait.until(EC.element_to_be_clickable(self.ID_SEARCH_INPUT))
+        search_box.clear()
+        search_box.send_keys(text)
+        search_box.send_keys(Keys.RETURN)
+
+    def search_by_email(self, text: str):
+        wait = WebDriverWait(self.driver, 10)
+        search_box = wait.until(EC.element_to_be_clickable(self.EMAIL_SEARCH_INPUT))
+        search_box.clear()
+        search_box.send_keys(text)
+        search_box.send_keys(Keys.RETURN)
+
+    def search_by_status(self, text: str):
+        wait = WebDriverWait(self.driver, 10)
+        search_box = wait.until(EC.element_to_be_clickable(self.STATUS_SEARCH_INPUT))
         search_box.clear()
         search_box.send_keys(text)
         search_box.send_keys(Keys.RETURN)
@@ -72,6 +86,17 @@ class TransactionPage(BasePage):
             return self.is_element_present(self.SEARCH_RESULTS)
         except TimeoutException:
             return False
+        
+    def click_clear_search_button(self):
+        """
+        Click the Go Back button after test is done
+        """
+        wait = WebDriverWait(self.driver, 10)
+        clear_search_button = wait.until(EC.element_to_be_clickable(self.CLEAR_SEARCH_BUTTON))
+        clear_search_button.click()
+
+        # wait.until(EC.visibility_of_element_located(self.SEARCH_INPUT))
+
 
     def click_upload_button(self):
         """

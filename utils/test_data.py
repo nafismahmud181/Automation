@@ -52,6 +52,10 @@ class TestData:
         expected_result="success"
     )
     
-    # Search test data
-    VALID_SEARCH_TEXT = "20250721.00005"
-    INVALID_SEARCH_TEXT = "InvalidSearchThatShouldNotExist123!@#"
+    #ID Search test data
+    ID_VALID_SEARCH_TEXT = "20250721.00005"
+    ID_INVALID_SEARCH_TEXT = "InvalidSearchThatShouldNotExist123!@#"
+
+    # Email From Search test data
+    EMAIL_FROM_VALID_SEARCH_TEXT = "nafis@aidocbuilder.com"
+    EMAIL_FROM_INVALID_SEARCH_TEXT = "InvalidEmailSearchThatShouldNotExist123!@#"

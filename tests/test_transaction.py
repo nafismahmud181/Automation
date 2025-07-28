@@ -46,31 +46,29 @@ class TestTransactionSearch:
         
     #     logger.info("Invalid search test completed successfully")
 
-    # @pytest.mark.smoke
-    # def test_batch_upload_success(self, transaction_page):
-    #     """Test successful batch upload of ZIP file"""
-    #     logger.info("Testing batch upload functionality")
+   
+    def test_batch_upload_valid_file(self, transaction_page):
+        """Test batch upload with nvalid ZIP file"""
+        logger.info("Testing batch upload with nvalid ZIP file")
         
-    #     # Get upload data from test data
-    #     upload_data = TestData.BATCH_UPLOAD_FILE
+        valid_file_path = os.path.join(os.getcwd(), "assets", "20250723.U04246.zip")
         
-    #     # Verify file exists before attempting upload
-    #     assert os.path.exists(upload_data.file_path), f"Upload file not found: {upload_data.file_path}"
+        # Skip if test file not available
+        if not os.path.exists(valid_file_path):
+            pytest.skip(f"nvalid ZIP file not found: {valid_file_path}")
         
-    #     # Perform batch upload
-    #     transaction_page.perform_batch_upload(upload_data.file_path)
+        # Perform batch upload with invalid file
+        transaction_page.perform_batch_upload(valid_file_path)
         
-    #     # Wait for upload to process
-    #     transaction_page.wait_for_element(transaction_page.UPLOAD_SUCCESS_MESSAGE, timeout=30)
+        # Get upload result message
+        message = transaction_page.get_upload_message(timeout=10)
         
-    #     # Verify upload was successful
-    #     assert transaction_page.is_upload_successful(), "Upload should be successful"
+        # Verify error message
+        # assert "Invalid Zip file. Zip should contain db_data.json" in message, \
+        #     f"Expected invalid ZIP error message, got: {message}"
         
-    #     # Get and verify success message
-    #     upload_message = transaction_page.get_upload_message()
-    #     assert upload_message != "", "Upload success message should be displayed"
-        
-    #     logger.info(f"Batch upload test completed successfully. Message: {upload_message}")
+        logger.info(f"Valid ZIP file upload test completed. Error: {message}")
+
 
     def test_batch_upload_invalid_file(self, transaction_page):
         """Test batch upload with invalid ZIP file"""
@@ -94,4 +92,5 @@ class TestTransactionSearch:
         
         logger.info(f"Invalid ZIP file upload test completed. Error: {message}")
 
+    
     

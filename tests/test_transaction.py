@@ -21,7 +21,7 @@ class TestTransactionSearch:
         assert transaction_page.is_search_successful(search_text), \
             f"Search should find element with data-id='email-batch {search_text} id'"
 
-        results = transaction_page.get_search_results(search_text)
+        results = transaction_page.get_ID_search_results(search_text)
         assert results != "", f"No results found for search text '{search_text}'"
         assert search_text.lower() in results.lower(), f"Results should contain '{search_text}'"
 
@@ -35,62 +35,52 @@ class TestTransactionSearch:
 
         search_text = TestData.ID_INVALID_SEARCH_TEXT
 
-        # Use the clearly named method
         transaction_page.search_by_id(search_text)
+
+        assert transaction_page.is_no_results_displayed(), "Expected 'No results found' message not displayed"
+
+        transaction_page.click_clear_search_button()
+
+        logger.info("Invalid ID search test completed successfully")
+   
+    @pytest.mark.smoke
+    def test_email_from_valid_search(self, transaction_page):
+        logger.info("Testing email-from search with valid text")
+
+        search_text = TestData.EMAIL_FROM_VALID_SEARCH_TEXT
+        transaction_page.search_by_email_from(search_text)
+
+        # Wait and collect all email-from column results
+        email_results = transaction_page.get_email_from_results()
+
+        # Assert we received at least one result
+        assert email_results, f"No email-from results found for '{search_text}'"
+
+        # Assert each result contains the searched text (case-insensitive)
+        for email in email_results:
+            assert search_text.lower() in email.lower(), \
+                f"Expected '{search_text}' to be in result '{email}'"
+
+        transaction_page.click_clear_search_button()
+        logger.info("Valid email-from search test completed successfully")
+
+
+
+    def test_email_from_invalid_search(self, transaction_page):
+        """Test Email From search with invalid text"""
+        logger.info("Testing ID search with invalid text")
+
+        search_text = TestData.EMAIL_FROM_INVALID_SEARCH_TEXT
+
+        # Use the clearly named method
+        transaction_page.search_by_email_from(search_text)
 
         # Assert that the "No results found" message appears
         assert transaction_page.is_no_results_displayed(), "Expected 'No results found' message not displayed"
 
         # Optional: Clear the search box or go back to the main page if needed
         transaction_page.click_clear_search_button()
-        # OR if you use a Go Back button instead:
-        # transaction_page.click_go_back_button()
-
-        logger.info("Invalid ID search test completed successfully")
-   
-    @pytest.mark.smoke
-    def test_Email_From_valid_search(self, transaction_page):
-        """Test search with valid text"""
-        logger.info("Testing search with valid text")
-        
-        # Valid search text that should return results
-        search_text = TestData.EMAIL_FROM_VALID_SEARCH_TEXT
-        
-        # Perform search
-        transaction_page.search_text(search_text)
-        
-        # Verify search was successful using the dynamic search text
-        assert transaction_page.is_search_successful(search_text), \
-            f"Search should find element with data-id='email-batch {search_text} id'"
-        
-        # Verify results contain the search text
-        results = transaction_page.get_search_results(search_text)
-        assert results != "", f"No results found for search text '{search_text}'"
-        assert search_text.lower() in results.lower(), f"Results should contain '{search_text}'"
-        
-        # Click clear search button after assertions
-        transaction_page.click_clear_search_button()
-
-        logger.info("Valid search test completed successfully")
-
-
-    def test_Email_From_invalid_search(self, transaction_page):
-        """Test search with invalid text"""
-        logger.info("Testing search with invalid text")
-        
-        # Invalid search text that should return no results
-        search_text = TestData.EMAIL_FROM_INVALID_SEARCH_TEXT
-        
-        # Perform search
-        transaction_page.search_text(search_text)
-        
-        # Verify no results message is displayed
-        assert transaction_page.is_no_results_displayed(), "No results message should be displayed"
-
-        # Click clear search button after assertions
-        transaction_page.click_clear_search_button()
-        
-        logger.info("Invalid search test completed successfully")
+        logger.info("Invalid Email From search test completed successfully")
 
    
     # def test_batch_upload_valid_file(self, transaction_page):

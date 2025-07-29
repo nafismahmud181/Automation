@@ -10,6 +10,12 @@ from selenium.common.exceptions import TimeoutException
 class TransactionPage(BasePage):
     # Search Locators
     ID_SEARCH_INPUT = (By.XPATH, "//*[@data-id='email-batches search id']")
+    EMAIL_FROM_SEARCH_INPUT = (By.XPATH, "//*[@data-id='email-batches search email-from']")
+    EMAIL_FROM_RESULTS = (By.XPATH, "//td[contains(@data-id, 'email-from')]")
+    EMAIL_SUBJECT_INPUT = (By.XPATH, "//*[@data-id='email-batches search email-subject']")
+    MATCHED_PROFILE = (By.XPATH, "//*[@data-id='email-batches search matched-profile']")
+    CONFIRMATION_NUMBER = (By.XPATH, "//*[@data-id='']")
+    STATUS_SEARCH_INPUT = (By.XPATH, "//*[@data-id='email-batches sort status']")
     SEARCH_RESULTS = (By.XPATH, "//div[@class='search-results']")
     NO_RESULTS_MESSAGE = (By.XPATH, "//div[contains(text(),'No results found')]")
     CLEAR_SEARCH_BUTTON = (By.XPATH, "//button[@data-id='email-batch-clearSearch']")
@@ -33,10 +39,17 @@ class TransactionPage(BasePage):
         search_box.clear()
         search_box.send_keys(text)
         search_box.send_keys(Keys.RETURN)
+        
+    def search_by_email_from(self, text: str):
+        wait = WebDriverWait(self.driver, 10)
+        search_box = wait.until(EC.element_to_be_clickable(self.EMAIL_FROM_SEARCH_INPUT))
+        search_box.clear()
+        search_box.send_keys(text)
+        search_box.send_keys(Keys.RETURN)
 
     def search_by_email(self, text: str):
         wait = WebDriverWait(self.driver, 10)
-        search_box = wait.until(EC.element_to_be_clickable(self.EMAIL_SEARCH_INPUT))
+        search_box = wait.until(EC.element_to_be_clickable(self.EMAIL_SUBJECT_INPUT))
         search_box.clear()
         search_box.send_keys(text)
         search_box.send_keys(Keys.RETURN)
@@ -48,7 +61,7 @@ class TransactionPage(BasePage):
         search_box.send_keys(text)
         search_box.send_keys(Keys.RETURN)
 
-    def get_search_results(self, search_text=None):
+    def get_ID_search_results(self, search_text=None):
         """
         Get search result text using the dynamic search text
         """
@@ -61,6 +74,14 @@ class TransactionPage(BasePage):
             return ""
         except TimeoutException:
             return ""
+               
+    def get_email_from_results(self):
+        """
+        Get all email from search results
+        """
+        wait = WebDriverWait(self.driver, 10)
+        elements = wait.until(EC.presence_of_all_elements_located(self.EMAIL_FROM_RESULTS))
+        return [el.text.strip() for el in elements]
 
     def is_no_results_displayed(self):
         """

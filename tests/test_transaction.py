@@ -8,7 +8,7 @@ logger = get_logger(__name__)
 
 @pytest.mark.transaction
 @pytest.mark.usefixtures("transaction_driver")
-class TestTransactionSearch:
+class TestTransactionPage:
     """Test suite for transaction search functionality"""
 
     @pytest.mark.smoke

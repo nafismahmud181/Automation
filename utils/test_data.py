@@ -63,3 +63,7 @@ class TestData:
     # Email Subject Search test data
     EMAIL_SUBJECT_VALID_SEARCH_TEXT = "testing pdf msg eml"
     EMAIL_SUBJECT_INVALID_SEARCH_TEXT = "InvalidEmailSubjectSearchThatShouldNotExist123!@#"
+
+    # Matched Profile Search test data
+    MATCHED_PROFILE_VALID_SEARCH_TEXT = "JP_WEBBOOKING_SEA_ShipmentCreate"
+    MATCHED_PROFILE_INVALID_SEARCH_TEXT = "InvalidMatchedProfileSearchThatShouldNotExist123!@#"

@@ -67,3 +67,9 @@ class TestData:
     # Matched Profile Search test data
     MATCHED_PROFILE_VALID_SEARCH_TEXT = "JP_WEBBOOKING_SEA_ShipmentCreate"
     MATCHED_PROFILE_INVALID_SEARCH_TEXT = "InvalidMatchedProfileSearchThatShouldNotExist123!@#"
+
+    # Confirmation Number Search test data
+    CONFIRMATION_NUMBER_VALID_SEARCH_TEXT = "S2500057129"
+    CONFIRMATION_NUMBER_INVALID_SEARCH_TEXT = "InvalidConfirmationNumberSearchThatShouldNotExist123!@#"
+
+    

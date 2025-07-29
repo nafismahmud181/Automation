@@ -162,6 +162,46 @@ class TestTransactionSearch:
         transaction_page.click_clear_search_button()
         logger.info("Invalid Email subject search test completed successfully")
 
+
+    @pytest.mark.smoke
+    def test_confirmation_number_valid_search(self, transaction_page):
+        logger.info("Testing matched profile search with valid text")
+
+        search_text = TestData.CONFIRMATION_NUMBER_VALID_SEARCH_TEXT
+        transaction_page.search_by_confirmation_number(search_text)
+
+        # Wait and collect all confirmation_number column results
+        email_results = transaction_page.get_confirmation_number_results()
+
+        # Assert we received at least one result
+        assert email_results, f"No confirmation_number results found for '{search_text}'"
+
+        # Assert each result contains the searched text (case-insensitive)
+        for email in email_results:
+            assert search_text.lower() in email.lower(), \
+                f"Expected '{search_text}' to be in result '{email}'"
+
+        transaction_page.click_clear_search_button()
+        logger.info("Valid confirmation_number search test completed successfully")
+
+
+
+    def test_confirmation_number_invalid_search(self, transaction_page):
+        """Test Matched Profile search with invalid text"""
+        logger.info("Testing ID search with invalid text")
+
+        search_text = TestData.CONFIRMATION_NUMBER_INVALID_SEARCH_TEXT
+
+        # Use the clearly named method
+        transaction_page.search_by_confirmation_number(search_text)
+
+        # Assert that the "No results found" message appears
+        assert transaction_page.is_no_results_displayed(), "Expected 'No results found' message not displayed"
+
+        # Optional: Clear the search box or go back to the main page if needed
+        transaction_page.click_clear_search_button()
+        logger.info("Invalid Email subject search test completed successfully")
+
    
     # def test_batch_upload_valid_file(self, transaction_page):
     #     """Test batch upload with nvalid ZIP file"""

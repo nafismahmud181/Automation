@@ -13,6 +13,7 @@ class TransactionPage(BasePage):
     EMAIL_FROM_SEARCH_INPUT = (By.XPATH, "//*[@data-id='email-batches search email-from']")
     EMAIL_FROM_RESULTS = (By.XPATH, "//td[contains(@data-id, 'email-from')]")
     EMAIL_SUBJECT_INPUT = (By.XPATH, "//*[@data-id='email-batches search email-subject']")
+    EMAIL_SUBJECT_RESULTS = (By.XPATH, "//td[contains(@data-id, 'email-subject')]")
     MATCHED_PROFILE = (By.XPATH, "//*[@data-id='email-batches search matched-profile']")
     CONFIRMATION_NUMBER = (By.XPATH, "//*[@data-id='']")
     STATUS_SEARCH_INPUT = (By.XPATH, "//*[@data-id='email-batches sort status']")
@@ -47,7 +48,7 @@ class TransactionPage(BasePage):
         search_box.send_keys(text)
         search_box.send_keys(Keys.RETURN)
 
-    def search_by_email(self, text: str):
+    def search_by_email_subject(self, text: str):
         wait = WebDriverWait(self.driver, 10)
         search_box = wait.until(EC.element_to_be_clickable(self.EMAIL_SUBJECT_INPUT))
         search_box.clear()
@@ -81,6 +82,14 @@ class TransactionPage(BasePage):
         """
         wait = WebDriverWait(self.driver, 10)
         elements = wait.until(EC.presence_of_all_elements_located(self.EMAIL_FROM_RESULTS))
+        return [el.text.strip() for el in elements]
+               
+    def get_email_subject_results(self):
+        """
+        Get all email subject search results
+        """
+        wait = WebDriverWait(self.driver, 10)
+        elements = wait.until(EC.presence_of_all_elements_located(self.EMAIL_SUBJECT_RESULTS))
         return [el.text.strip() for el in elements]
 
     def is_no_results_displayed(self):

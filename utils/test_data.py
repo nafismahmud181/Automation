@@ -57,5 +57,9 @@ class TestData:
     ID_INVALID_SEARCH_TEXT = "InvalidSearchThatShouldNotExist123!@#"
 
     # Email From Search test data
-    EMAIL_FROM_VALID_SEARCH_TEXT = "nafis@aidocbuilder.com"
+    EMAIL_FROM_VALID_SEARCH_TEXT = "ayushman.bokde@dhl.com"
     EMAIL_FROM_INVALID_SEARCH_TEXT = "InvalidEmailSearchThatShouldNotExist123!@#"
+
+    # Email Subject Search test data
+    EMAIL_SUBJECT_VALID_SEARCH_TEXT = "testing pdf msg eml"
+    EMAIL_SUBJECT_INVALID_SEARCH_TEXT = "InvalidEmailSubjectSearchThatShouldNotExist123!@#"

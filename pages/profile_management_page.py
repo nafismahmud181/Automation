@@ -111,60 +111,7 @@ class ProfileManagementPage(BasePage):
             "create" in self.driver.current_url.lower() or "profiles" in self.driver.current_url.lower()
         ])
 
-    # def fill_profile_name(self, profile_name: str):
-    #     """Fill the profile name field"""
-    #     try:
-    #         wait = WebDriverWait(self.driver, 10)
-    #         name_input = wait.until(EC.element_to_be_clickable(self.PROFILE_NAME_INPUT))
-    #         name_input.clear()
-    #         name_input.send_keys(profile_name)
-    #         return True
-    #     except TimeoutException:
-    #         return False
-
-    # def fill_profile_description(self, description: str):
-    #     """Fill the profile description field"""
-    #     try:
-    #         wait = WebDriverWait(self.driver, 10)
-    #         desc_input = wait.until(EC.element_to_be_clickable(self.PROFILE_DESCRIPTION_INPUT))
-    #         desc_input.clear()
-    #         desc_input.send_keys(description)
-    #         return True
-    #     except TimeoutException:
-    #         return False
-
-    # def select_profile_type(self, profile_type: str):
-    #     """Select profile type from dropdown"""
-    #     try:
-    #         from selenium.webdriver.support.ui import Select
-    #         wait = WebDriverWait(self.driver, 10)
-    #         dropdown = wait.until(EC.element_to_be_clickable(self.PROFILE_TYPE_DROPDOWN))
-    #         select = Select(dropdown)
-    #         select.select_by_visible_text(profile_type)
-    #         return True
-    #     except (TimeoutException, Exception):
-    #         return False
-
-    # def click_save_profile(self):
-    #     """Click the Save Profile button"""
-    #     try:
-    #         wait = WebDriverWait(self.driver, 10)
-    #         save_button = wait.until(EC.element_to_be_clickable(self.SAVE_PROFILE_BUTTON))
-    #         save_button.click()
-    #         return True
-    #     except TimeoutException:
-    #         return False
-
-    # def click_cancel_button(self):
-    #     """Click the Cancel button"""
-    #     try:
-    #         wait = WebDriverWait(self.driver, 10)
-    #         cancel_button = wait.until(EC.element_to_be_clickable(self.CANCEL_BUTTON))
-    #         cancel_button.click()
-    #         return True
-    #     except TimeoutException:
-    #         return False
-
+    
     def get_success_message(self) -> str:
         """Get success message text"""
         if self.is_element_present(self.SUCCESS_MESSAGE):

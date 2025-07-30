@@ -210,3 +210,25 @@ def pytest_runtest_makereport(item, call):
     outcome = yield
     rep = outcome.get_result()
     setattr(item, f"rep_{rep.when}", rep)
+
+
+@pytest.fixture(scope="class")
+def profile_driver(request):
+    """Dedicated driver for profile management tests"""
+    driver = get_browser()
+    request.cls.driver = driver
+    yield driver
+    driver.quit()
+
+@pytest.fixture(scope="class")
+def profile_page(profile_driver):
+    """Provide profile management page instance with login handled"""
+    from pages.profile_management_page import ProfileManagementPage
+    
+    login_page = LoginPage(profile_driver)
+    login_page.navigate_to_login()
+    credentials = TestData.VALID_USER
+    login_page.login(credentials.username, credentials.password)
+    assert login_page.is_login_successful(), "Login failed, cannot proceed to profile management page"
+    time.sleep(2)
+    return ProfileManagementPage(profile_driver)

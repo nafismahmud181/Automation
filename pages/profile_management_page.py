@@ -25,7 +25,7 @@ class ProfileManagementPage(BasePage):
     CUSTOMER_NAME_FIELD = (By.XPATH, "//*[@data-id='profiles-search-customer-name']")
     CUSTOMER_NAME_RESULTS = (By.XPATH, "//td[contains(@data-id, 'profile-customer')]")
 
-    EMAIL_SUBJECT_FIELD = (By.XPATH, "//*[@data-id='profiles-search-email-subject']")
+    EMAIL_SUBJECT_FIELD = (By.XPATH, "//*[@data-id='profiles-search-email-subject-match-text']")
     EMAIL_SUBJECT_RESULT = (By.XPATH, "//td[contains(@data-id, 'profile-email-subject')]")
 
     PROJECT_FIELD = (By.XPATH, "//*[@data-id='profiles-search-project']")
@@ -34,7 +34,7 @@ class ProfileManagementPage(BasePage):
     COUNTRY_FIELD = (By.XPATH, "//*[@data-id='profiles-search-country']")
     COUNTRY_FIELD_RESULT = (By.XPATH, "//td[contains(@data-id, 'profile-country')]")
 
-    MODE_OF_TRANSPORT_FIELD = (By.XPATH, "//*[@data-id='profiles-search-transport']")
+    MODE_OF_TRANSPORT_FIELD = (By.XPATH, "//*[@data-id='profiles-search-mode-of-transport']")
     MODE_OF_TRANSPORT_RESULT = (By.XPATH, "//td[contains(@data-id, 'profile-transport')]")
     
     # Form Buttons
@@ -185,6 +185,7 @@ class ProfileManagementPage(BasePage):
             # Hover over the transaction menu to reveal submenu
             self.action.move_to_element(transaction_menu).perform()
             time.sleep(2)  # Allow submenu to appear
+            self.action.move_by_offset(0, 0).perform()  # Adjust cursor position
             
             return True
         except TimeoutException:

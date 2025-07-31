@@ -81,19 +81,18 @@ class TestData:
     CUSTOMER_NAME_INVALID_SEARCH_TEXT = "InvalidCustomerSearchThatShouldNotExist123!@#"
     
     # Email Subject Search test data
-    EMAIL_SUBJECT_VALID_SEARCH_TEXT = "Testing PDF msg eml"
+    EMAIL_SUBJECT_VALID_SEARCH_TEXT = "XLS_TEMPLATE"
     EMAIL_SUBJECT_INVALID_SEARCH_TEXT = "InvalidEmailSubjectSearchThatShouldNotExist123!@#"
 
     # Project Name Search test data
-    PROJECT_NAME_VALID_SEARCH_TEXT = "BD_NIPU_ALL_CreateCustomsJob (B+CIV)"
+    PROJECT_NAME_VALID_SEARCH_TEXT = "CreateCustomsJob (B+CIV)"
     PROJECT_NAME_INVALID_SEARCH_TEXT = "InvalidProjectSearchThatShouldNotExist123!@#"
 
     # Country Search test data
-    COUNTRY_VALID_SEARCH_TEXT = "India"
+    COUNTRY_VALID_SEARCH_TEXT = "BD"
     COUNTRY_INVALID_SEARCH_TEXT = "InvalidCountrySearchThatShouldNotExist123!@#"
 
     # Mode of Transport Search test data
     MODE_OF_TRANSPORT_VALID_SEARCH_TEXT = "Air"
     MODE_OF_TRANSPORT_INVALID_SEARCH_TEXT = "InvalidTransportSearchThatShouldNotExist123!@#"
 
-    

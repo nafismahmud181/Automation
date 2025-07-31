@@ -14,18 +14,29 @@ class ProfileManagementPage(BasePage):
     
     # Profile Management Links
     MANAGE_PROFILE_LINK = (By.XPATH, "//*[@data-id='nav-group-item-profile-management']/a")
-    # MANAGE_PROFILES_LINK = (By.LINK_TEXT, "Manage Profiles")
-    # VIEW_PROFILES_LINK = (By.LINK_TEXT, "View Profiles")
-    
-    # Create Profile Page Elements
+
     
     PROFILE_DESCRIPTION_INPUT = (By.XPATH, "//textarea[@name='description' or @id='description']")
     PROFILE_TYPE_DROPDOWN = (By.XPATH, "//select[@name='profile_type' or @id='profile-type']")
 
     #Input fields for Profile management details
     PROFILE_NAME_FIELD = (By.XPATH, "//*[@data-id='profiles-search-name']")
+
     CUSTOMER_NAME_FIELD = (By.XPATH, "//*[@data-id='profiles-search-customer-name']")
     CUSTOMER_NAME_RESULTS = (By.XPATH, "//td[contains(@data-id, 'profile-customer')]")
+
+    EMAIL_SUBJECT_FIELD = (By.XPATH, "//*[@data-id='profiles-search-email-subject']")
+    EMAIL_SUBJECT_RESULT = (By.XPATH, "//td[contains(@data-id, 'profile-email-subject')]")
+
+    PROJECT_FIELD = (By.XPATH, "//*[@data-id='profiles-search-project']")
+    PROJECT_FIELD_RESULT = (By.XPATH, "//td[contains(@data-id, 'profile-project')]")
+
+    COUNTRY_FIELD = (By.XPATH, "//*[@data-id='profiles-search-country']")
+    COUNTRY_FIELD_RESULT = (By.XPATH, "//td[contains(@data-id, 'profile-country')]")
+
+    MODE_OF_TRANSPORT_FIELD = (By.XPATH, "//*[@data-id='profiles-search-transport']")
+    MODE_OF_TRANSPORT_RESULT = (By.XPATH, "//td[contains(@data-id, 'profile-transport')]")
+    
     # Form Buttons
     CLEAR_SEARCH_BUTTON = (By.XPATH, "//*[@data-id='profiles-button-clear-search']")
 
@@ -65,6 +76,34 @@ class ProfileManagementPage(BasePage):
         search_box.send_keys(text)
         search_box.send_keys(Keys.RETURN)
 
+    def search_by_email_subject(self, text: str):
+        wait = WebDriverWait(self.driver, 10)
+        search_box = wait.until(EC.element_to_be_clickable(self.EMAIL_SUBJECT_FIELD))
+        search_box.clear()
+        search_box.send_keys(text)
+        search_box.send_keys(Keys.RETURN)
+
+    def search_by_project(self, text: str):
+        wait = WebDriverWait(self.driver, 10)
+        search_box = wait.until(EC.element_to_be_clickable(self.PROJECT_FIELD))
+        search_box.clear()
+        search_box.send_keys(text)
+        search_box.send_keys(Keys.RETURN)
+
+    def search_by_country(self, text: str):
+        wait = WebDriverWait(self.driver, 10)
+        search_box = wait.until(EC.element_to_be_clickable(self.COUNTRY_FIELD))
+        search_box.clear()
+        search_box.send_keys(text)
+        search_box.send_keys(Keys.RETURN)
+
+    def search_by_mode_of_transport(self, text: str):
+        wait = WebDriverWait(self.driver, 10)
+        search_box = wait.until(EC.element_to_be_clickable(self.MODE_OF_TRANSPORT_FIELD))
+        search_box.clear()
+        search_box.send_keys(text)
+        search_box.send_keys(Keys.RETURN)
+
     def is_search_successful(self) -> bool:
         """Check if a profile search returned a row with all required data-id fields"""
         required_fields = [
@@ -96,6 +135,42 @@ class ProfileManagementPage(BasePage):
         """
         wait = WebDriverWait(self.driver, 10)
         elements = wait.until(EC.presence_of_all_elements_located(self.CUSTOMER_NAME_RESULTS))
+        return [el.text.strip() for el in elements]
+
+    def get_email_subject_results(self):
+        """
+        Get all email subjects from search results
+        Returns a list of email subjects found in the search results.
+        """
+        wait = WebDriverWait(self.driver, 10)
+        elements = wait.until(EC.presence_of_all_elements_located(self.EMAIL_SUBJECT_RESULT))
+        return [el.text.strip() for el in elements]
+
+    def get_project_results(self):
+        """
+        Get all project names from search results
+        Returns a list of project names found in the search results.
+        """
+        wait = WebDriverWait(self.driver, 10)
+        elements = wait.until(EC.presence_of_all_elements_located(self.PROJECT_FIELD_RESULT))
+        return [el.text.strip() for el in elements]
+
+    def get_country_results(self):
+        """
+        Get all countries from search results
+        Returns a list of countries found in the search results.
+        """
+        wait = WebDriverWait(self.driver, 10)
+        elements = wait.until(EC.presence_of_all_elements_located(self.COUNTRY_FIELD_RESULT))
+        return [el.text.strip() for el in elements]
+
+    def get_mode_of_transport_results(self):
+        """
+        Get all mode of transport from search results
+        Returns a list of mode of transport found in the search results.
+        """
+        wait = WebDriverWait(self.driver, 10)
+        elements = wait.until(EC.presence_of_all_elements_located(self.MODE_OF_TRANSPORT_RESULT))
         return [el.text.strip() for el in elements]
 
     def navigate_to_transaction_menu(self):

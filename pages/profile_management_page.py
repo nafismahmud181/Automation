@@ -21,8 +21,14 @@ class ProfileManagementPage(BasePage):
     
     PROFILE_DESCRIPTION_INPUT = (By.XPATH, "//textarea[@name='description' or @id='description']")
     PROFILE_TYPE_DROPDOWN = (By.XPATH, "//select[@name='profile_type' or @id='profile-type']")
-    
+
+    #Input fields for Profile management details
+    PROFILE_NAME_FIELD = (By.XPATH, "//*[@data-id='profiles-search-name']")
+
+
     # Form Buttons
+    CLEAR_SEARCH_BUTTON = (By.XPATH, "//*[@data-id='profiles-button-clear-search']")
+
     SAVE_PROFILE_BUTTON = (By.XPATH, "//button[normalize-space()='Save Profile' or normalize-space()='Save']")
     CANCEL_BUTTON = (By.XPATH, "//button[normalize-space()='Cancel']")
     RESET_BUTTON = (By.XPATH, "//button[normalize-space()='Reset']")
@@ -45,6 +51,38 @@ class ProfileManagementPage(BasePage):
         self.url = f"{config.BASE_URL}/profiles" 
         self.action = ActionChains(driver)
 
+    def search_by_profile_name(self, text: str):
+        wait = WebDriverWait(self.driver, 10)
+        search_box = wait.until(EC.element_to_be_clickable(self.PROFILE_NAME_FIELD))
+        search_box.clear()
+        search_box.send_keys(text)
+        search_box.send_keys(Keys.RETURN)
+
+    def is_search_successful(self) -> bool:
+        """Check if a profile search returned a row with all required data-id fields"""
+        required_fields = [
+            "profile-name",
+            "profile-customer",
+            "profile-email-subject",
+            "profile-project",
+            "profile-country",
+            "profile-transport",
+        ]
+        try:
+            wait = WebDriverWait(self.driver, 10)
+            # Wait for row to appear
+            row = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "tr[data-id^='profile-row']")))
+
+            for field in required_fields:
+                if not row.find_elements(By.CSS_SELECTOR, f"[data-id^='{field}']"):
+                    print(f"Missing field: {field}")
+                    return False
+            return True
+        except Exception as e:
+            print(f"Search validation failed: {e}")
+            return False
+
+    
     def navigate_to_transaction_menu(self):
         """Navigate to and hover over the transaction menu"""
         try:
@@ -186,3 +224,23 @@ class ProfileManagementPage(BasePage):
     def get_current_page_url(self) -> str:
         """Get current page URL"""
         return self.driver.current_url
+    
+    def click_clear_search_button(self):
+        """
+        Click the Go Back button after test is done
+        """
+        wait = WebDriverWait(self.driver, 10)
+        clear_search_button = wait.until(EC.element_to_be_clickable(self.CLEAR_SEARCH_BUTTON))
+        clear_search_button.click()
+
+    def is_no_results_displayed(self):
+            """
+            Check if no results message is displayed by finding .text-center class
+            """
+            try:
+                no_results_locator = (By.CSS_SELECTOR, ".text-center")
+                result = self.is_element_present(no_results_locator)
+                time.sleep(5)  # Wait for 5 seconds after finding no results
+                return result
+            except TimeoutException:
+                return False

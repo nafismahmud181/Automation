@@ -221,7 +221,7 @@ def profile_driver(request):
     driver.quit()
 
 @pytest.fixture(scope="class")
-def profile_page(profile_driver):
+def profile_management_page(profile_driver):
     """Provide profile management page instance with login handled"""
     from pages.profile_management_page import ProfileManagementPage
     

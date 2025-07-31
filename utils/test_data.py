@@ -51,7 +51,7 @@ class TestData:
         file_name="20250723.U04246.zip",
         expected_result="success"
     )
-    
+    #Transaction Page Search test data
     #ID Search test data
     ID_VALID_SEARCH_TEXT = "20250721.00005"
     ID_INVALID_SEARCH_TEXT = "InvalidSearchThatShouldNotExist123!@#"
@@ -72,4 +72,7 @@ class TestData:
     CONFIRMATION_NUMBER_VALID_SEARCH_TEXT = "S2500057129"
     CONFIRMATION_NUMBER_INVALID_SEARCH_TEXT = "InvalidConfirmationNumberSearchThatShouldNotExist123!@#"
 
+    #Profile Management Page Search test data
+    PROFILE_NAME_VALID_SEARCH_TEXT = "BD_NIPU_ALL_CreateCustomsJob (B+CIV)"
+    PROFILE_NAME_INVALID_SEARCH_TEXT = "InvalidProfileSearchThatShouldNotExist123!@#"
     

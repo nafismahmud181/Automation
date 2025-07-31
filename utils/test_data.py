@@ -81,7 +81,7 @@ class TestData:
     CUSTOMER_NAME_INVALID_SEARCH_TEXT = "InvalidCustomerSearchThatShouldNotExist123!@#"
     
     # Email Subject Search test data
-    EMAIL_SUBJECT_VALID_SEARCH_TEXT = "XLS_TEMPLATE"
+    EMAIL_SUBJECT_VALID_SEARCH_TEXT = "Meem12345678"
     EMAIL_SUBJECT_INVALID_SEARCH_TEXT = "InvalidEmailSubjectSearchThatShouldNotExist123!@#"
 
     # Project Name Search test data

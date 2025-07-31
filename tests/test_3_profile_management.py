@@ -46,8 +46,8 @@ class TestProfileManagement:
         logger.info("Search completed and cleared successfully")
 
     def test_invalid_profile_search(self, profile_management_page):
-        """Test ID search with invalid text"""
-        logger.info("Testing ID search with invalid text")
+        """Test searching for a profile with invalid text"""
+        logger.info("Testing invalid profile search")
 
         search_text = TestData.PROFILE_NAME_INVALID_SEARCH_TEXT
         profile_management_page.search_by_profile_name(search_text)
@@ -56,5 +56,45 @@ class TestProfileManagement:
 
         profile_management_page.click_clear_search_button()
 
-        logger.info("Invalid ID search test completed successfully")
+        logger.info("Invalid profile search test completed successfully")
 
+    @pytest.mark.smoke
+    def test_customer_name_valid_search(self, profile_management_page):
+        logger.info("Testing customer name search with valid text")
+
+        search_text = TestData.CUSTOMER_NAME_VALID_SEARCH_TEXT
+        profile_management_page.search_by_customer_name(search_text)
+
+        # Wait and collect all email-from column results
+        customer_name_result = profile_management_page.get_customer_name_results()
+
+        # Log the count of email-from entries
+        logger.info(f"Found {len(customer_name_result)} email-from entries after search")
+
+        # Assert we received at least one result
+        assert customer_name_result, f"No email-from results found for '{search_text}'"
+
+        # Assert each result contains the searched text (case-insensitive)
+        for name in customer_name_result:
+            assert search_text.lower() in name.lower(), \
+                f"Expected '{search_text}' to be in result '{name}'"
+
+        profile_management_page.click_clear_search_button()
+        logger.info("Valid customer name search test completed successfully")
+
+
+    def test_customer_name_invalid_search(self, profile_management_page):
+        """Test customer name search with invalid text"""
+        logger.info("Testing customer name search with invalid text")
+
+        search_text = TestData.EMAIL_FROM_INVALID_SEARCH_TEXT
+
+        # Use the clearly named method
+        profile_management_page.search_by_customer_name(search_text)
+
+        # Assert that the "No results found" message appears
+        assert profile_management_page.is_no_results_displayed(), "Expected 'No results found' message not displayed"
+
+        # Optional: Clear the search box or go back to the main page if needed
+        profile_management_page.click_clear_search_button()
+        logger.info("Invalid customer name search test completed successfully")

@@ -24,8 +24,8 @@ class ProfileManagementPage(BasePage):
 
     #Input fields for Profile management details
     PROFILE_NAME_FIELD = (By.XPATH, "//*[@data-id='profiles-search-name']")
-
-
+    CUSTOMER_NAME_FIELD = (By.XPATH, "//*[@data-id='profiles-search-customer-name']")
+    CUSTOMER_NAME_RESULTS = (By.XPATH, "//td[contains(@data-id, 'profile-customer')]")
     # Form Buttons
     CLEAR_SEARCH_BUTTON = (By.XPATH, "//*[@data-id='profiles-button-clear-search']")
 
@@ -58,6 +58,13 @@ class ProfileManagementPage(BasePage):
         search_box.send_keys(text)
         search_box.send_keys(Keys.RETURN)
 
+    def search_by_customer_name(self, text: str):
+        wait = WebDriverWait(self.driver, 10)
+        search_box = wait.until(EC.element_to_be_clickable(self.CUSTOMER_NAME_FIELD))
+        search_box.clear()
+        search_box.send_keys(text)
+        search_box.send_keys(Keys.RETURN)
+
     def is_search_successful(self) -> bool:
         """Check if a profile search returned a row with all required data-id fields"""
         required_fields = [
@@ -82,7 +89,15 @@ class ProfileManagementPage(BasePage):
             print(f"Search validation failed: {e}")
             return False
 
-    
+    def get_customer_name_results(self):
+        """
+        Get all customer names from search results
+        Returns a list of customer names found in the search results.
+        """
+        wait = WebDriverWait(self.driver, 10)
+        elements = wait.until(EC.presence_of_all_elements_located(self.CUSTOMER_NAME_RESULTS))
+        return [el.text.strip() for el in elements]
+
     def navigate_to_transaction_menu(self):
         """Navigate to and hover over the transaction menu"""
         try:

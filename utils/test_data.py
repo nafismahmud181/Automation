@@ -75,4 +75,8 @@ class TestData:
     #Profile Management Page Search test data
     PROFILE_NAME_VALID_SEARCH_TEXT = "BD_NIPU_ALL_CreateCustomsJob (B+CIV)"
     PROFILE_NAME_INVALID_SEARCH_TEXT = "InvalidProfileSearchThatShouldNotExist123!@#"
+
+    # Customer Name Search test data
+    CUSTOMER_NAME_VALID_SEARCH_TEXT = "Nafis"
+    CUSTOMER_NAME_INVALID_SEARCH_TEXT = "InvalidCustomerSearchThatShouldNotExist123!@#"
     

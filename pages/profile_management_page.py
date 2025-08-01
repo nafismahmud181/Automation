@@ -36,6 +36,15 @@ class ProfileManagementPage(BasePage):
 
     MODE_OF_TRANSPORT_FIELD = (By.XPATH, "//*[@data-id='profiles-search-mode-of-transport']")
     MODE_OF_TRANSPORT_RESULT = (By.XPATH, "//td[contains(@data-id, 'profile-transport')]")
+
+    # Column Headers for sorting
+    PROFILE_NAME_COLUMN_HEADER = (By.XPATH, "//*[@data-id='profiles-header-sort-name']")
+    CUSTOMER_NAME_COLUMN_HEADER = (By.XPATH, "//*[@data-id='profiles-header-sort-customer_name']")
+    EMAIL_SUBJECT_COLUMN_HEADER = (By.XPATH, "//*[@data-id='profiles-header-sort-email_subject_match_text']")
+    PROJECT_COLUMN_HEADER = (By.XPATH, "//*[@data-id='profiles-header-sort-project']")
+    COUNTRY_COLUMN_HEADER = (By.XPATH, "//*[@data-id='profiles-header-sort-country']")
+    MODE_OF_TRANSPORT_COLUMN_HEADER = (By.XPATH, "//*[@data-id='profiles-header-sort-mode_of_transport']")
+    UPDATED_DATE_COLUMN_HEADER = (By.XPATH, "//*[@data-id='profiles-header-sort-updated_at']")
     
     # Form Buttons
     CLEAR_SEARCH_BUTTON = (By.XPATH, "//*[@data-id='profiles-button-clear-search']")
@@ -103,6 +112,48 @@ class ProfileManagementPage(BasePage):
         search_box.clear()
         search_box.send_keys(text)
         search_box.send_keys(Keys.RETURN)
+
+    def click_name_column_header(self):
+        wait = WebDriverWait(self.driver, 10)
+        name_header = wait.until(EC.element_to_be_clickable(self.PROFILE_NAME_COLUMN_HEADER))
+        name_header.click()
+        time.sleep(2)
+
+    def click_curstomer_name_column_header(self):
+        wait = WebDriverWait(self.driver, 10)
+        name_header = wait.until(EC.element_to_be_clickable(self.CUSTOMER_NAME_COLUMN_HEADER))
+        name_header.click()
+        time.sleep(2)
+   
+    def click_email_subject_column_header(self):
+        wait = WebDriverWait(self.driver, 10)
+        name_header = wait.until(EC.element_to_be_clickable(self.EMAIL_SUBJECT_COLUMN_HEADER))
+        name_header.click()
+        time.sleep(2)
+      
+    def click_project_column_header(self):
+        wait = WebDriverWait(self.driver, 10)
+        name_header = wait.until(EC.element_to_be_clickable(self.PROJECT_COLUMN_HEADER))
+        name_header.click()
+        time.sleep(2)
+       
+    def click_country_column_header(self):
+        wait = WebDriverWait(self.driver, 10)
+        name_header = wait.until(EC.element_to_be_clickable(self.COUNTRY_COLUMN_HEADER))
+        name_header.click()
+        time.sleep(2)
+
+    def click_mode_of_transport_column_header(self):
+        wait = WebDriverWait(self.driver, 10)
+        name_header = wait.until(EC.element_to_be_clickable(self.MODE_OF_TRANSPORT_COLUMN_HEADER))
+        name_header.click()
+        time.sleep(2)
+
+    def click_updated_date_column_header(self):
+        wait = WebDriverWait(self.driver, 10)
+        name_header = wait.until(EC.element_to_be_clickable(self.UPDATED_DATE_COLUMN_HEADER))
+        name_header.click()
+        time.sleep(2)
 
     def is_search_successful(self) -> bool:
         """Check if a profile search returned a row with all required data-id fields"""
@@ -172,6 +223,10 @@ class ProfileManagementPage(BasePage):
         wait = WebDriverWait(self.driver, 10)
         elements = wait.until(EC.presence_of_all_elements_located(self.MODE_OF_TRANSPORT_RESULT))
         return [el.text.strip() for el in elements]
+    
+    def get_profile_name_column_header_results(self):
+        """"""
+        
 
     def navigate_to_transaction_menu(self):
         """Navigate to and hover over the transaction menu"""

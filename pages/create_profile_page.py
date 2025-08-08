@@ -12,8 +12,8 @@ from selenium.common.exceptions import TimeoutException
 class ProfileManagementPage(BasePage):
   TRANSACTION_MENU = (By.XPATH, "//*[@data-id='nav-group-toggle-home']")
   CREATE_PROFILE_LINK = (By.XPATH, "//li[@data-id='nav-group-item-create-profile']/a")
-  customer_name_input = (By.XPATH, "//*[@data-id='profile-create customer-name']")
   CREATE_PROFILE_HEADER = (By.XPATH, "//h2[normalize-space()='Create Profile']")
+  customer_name_input = (By.XPATH, "//*[@data-id='profile-create customer-name']")
 
   def __init__(self, driver):
     super().__init__(driver)
@@ -23,12 +23,10 @@ class ProfileManagementPage(BasePage):
   def clear_hover_state(self):
         """Clear any active hover states by using keyboard and clicking"""
         try:
-            # Method 1: Press Escape key to clear any active states
             body_element = self.driver.find_element(By.TAG_NAME, "body")
             body_element.send_keys(Keys.ESCAPE)
             time.sleep(0.5)
             
-            # Method 2: Click on a neutral area (body element) to clear any hover states
             self.driver.execute_script("arguments[0].click();", body_element)
             time.sleep(0.5)
             
@@ -72,7 +70,6 @@ class ProfileManagementPage(BasePage):
 
         wait = WebDriverWait(self.driver, 20)
         
-        # Wait for the submenu to appear and the Create Profile link to be visible
         try:
             create_profile_link = wait.until(
                 EC.visibility_of_element_located(self.CREATE_PROFILE_LINK)
@@ -81,16 +78,13 @@ class ProfileManagementPage(BasePage):
             print("Create Profile link not visible after hovering over transaction menu")
             return False
 
-        # Scroll to the element to ensure it's visible
         self.driver.execute_script("arguments[0].scrollIntoView(true);", create_profile_link)
         time.sleep(1)
 
-        # Try to click the element
         try:
             create_profile_link.click()
         except Exception as e:
             print(f"Normal click failed, trying JavaScript click: {e}")
-            # Fallback if normal click is intercepted
             try:
                 self.driver.execute_script("arguments[0].click();", create_profile_link)
             except Exception as js_error:
@@ -99,7 +93,6 @@ class ProfileManagementPage(BasePage):
 
         time.sleep(2)
         
-        # Clear hover state after successful click
         self.clear_hover_state()
         
         return True
@@ -112,21 +105,17 @@ class ProfileManagementPage(BasePage):
   def navigate_to_transaction_menu(self):
         """Navigate to and hover over the transaction menu"""
         try:
-            # Wait for the transaction menu to be present with a shorter timeout
             wait = WebDriverWait(self.driver, 20)
             transaction_menu = wait.until(
                 EC.presence_of_element_located(self.TRANSACTION_MENU)
             )
             
-            # Scroll to the element to ensure it's visible
             self.driver.execute_script("arguments[0].scrollIntoView(true);", transaction_menu)
             time.sleep(1)
             
-            # Hover over the transaction menu to reveal submenu
             self.action.move_to_element(transaction_menu).perform()
-            time.sleep(2)  # Allow submenu to appear
+            time.sleep(2)
             
-            # Try to move slightly to ensure hover is maintained
             self.action.move_by_offset(0, 10).perform()
             time.sleep(1)
             
@@ -141,11 +130,10 @@ class ProfileManagementPage(BasePage):
   def is_create_profile_page_loaded(self):
         """Check if Create Profile page is loaded"""
         try:
-            # Check for the header first
+
             if self.is_element_present(self.CREATE_PROFILE_HEADER):
                 return True
             
-            # Check URL as fallback
             current_url = self.driver.current_url.lower()
             if "create" in current_url or "profiles" in current_url:
                 return True

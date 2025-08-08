@@ -72,6 +72,10 @@ class TestData:
     CONFIRMATION_NUMBER_VALID_SEARCH_TEXT = "S2500057129"
     CONFIRMATION_NUMBER_INVALID_SEARCH_TEXT = "InvalidConfirmationNumberSearchThatShouldNotExist123!@#"
 
+    # Linked Batches Search test data
+    LINKED_BATCHES_VALID_SEARCH_TEXT = "20250807.100017"
+    LINKED_BATCHES_INVALID_SEARCH_TEXT = "InvalidLinkedBatchesSearchThatShouldNotExist123!@#"
+
     #Profile Management Page Search test data
     PROFILE_NAME_VALID_SEARCH_TEXT = "BD_NIPU_ALL_CreateCustomsJob (B+CIV)"
     PROFILE_NAME_INVALID_SEARCH_TEXT = "InvalidProfileSearchThatShouldNotExist123!@#"

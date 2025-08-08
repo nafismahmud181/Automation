@@ -23,6 +23,8 @@ class TransactionPage(BasePage):
     CONFIRMATION_NUMBER = (By.XPATH, "//*[@data-id='email-batches search confirmation-numbers']")
     CONFIRMATION_NUMBER_RESULTS = (By.XPATH, "//td[contains(@data-id, 'confirmation-numbers')]")
     
+    LINKED_BATCHES_SEARCH_INPUT = (By.XPATH, "//input[@data-id='email-batches search linked-batches']")
+    
     STATUS_SEARCH_INPUT = (By.XPATH, "//*[@data-id='email-batches sort status']")  # I have to think about this one
     
     SEARCH_RESULTS = (By.XPATH, "//div[@class='search-results']")
@@ -80,6 +82,14 @@ class TransactionPage(BasePage):
     def search_by_status(self, text: str):
         wait = WebDriverWait(self.driver, 10)
         search_box = wait.until(EC.element_to_be_clickable(self.STATUS_SEARCH_INPUT))
+        search_box.clear()
+        search_box.send_keys(text)
+        search_box.send_keys(Keys.RETURN)
+
+    def search_by_linked_batches(self, text: str):
+        """Search by linked batches"""
+        wait = WebDriverWait(self.driver, 10)
+        search_box = wait.until(EC.element_to_be_clickable(self.LINKED_BATCHES_SEARCH_INPUT))
         search_box.clear()
         search_box.send_keys(text)
         search_box.send_keys(Keys.RETURN)
@@ -152,6 +162,19 @@ class TransactionPage(BasePage):
                 dynamic_locator = (By.XPATH, f'//*[@data-id="email-batch {search_text} id"]')
                 return self.is_element_present(dynamic_locator)
             return self.is_element_present(self.SEARCH_RESULTS)
+        except TimeoutException:
+            return False
+
+    def is_linked_batches_search_successful(self, search_text: str):
+        """
+        Check if linked-batches search was successful by verifying the element with dynamic search text is found
+        """
+        try:
+            if search_text:
+                # Dynamic XPath based on search text
+                dynamic_locator = (By.XPATH, f'//*[@data-id="email-batch {search_text} id"]')
+                return self.is_element_present(dynamic_locator)
+            return False
         except TimeoutException:
             return False
         

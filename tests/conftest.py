@@ -53,17 +53,13 @@ def get_browser_with_timeout(timeout=120):  # 2 minutes timeout
             # Try multiple approaches
             try:
                 # First try: latest version (version parameter not supported in 4.0.1)
-                print("Attempting to use latest ChromeDriver...")
                 service = Service(ChromeDriverManager().install())
                 return webdriver.Chrome(service=service, options=options)
             except Exception as e:
-                print(f"Latest version failed: {e}")
                 try:
                     # Second try: Let Selenium Manager handle it
-                    print("Falling back to Selenium Manager...")
                     return webdriver.Chrome(options=options)
                 except Exception as e2:
-                    print(f"Selenium Manager failed: {e2}")
                     raise e2
     
     # Use threading to implement timeout
@@ -83,7 +79,6 @@ def get_browser_with_timeout(timeout=120):  # 2 minutes timeout
     thread.join(timeout)
     
     if thread.is_alive():
-        print(f"ChromeDriver creation timed out after {timeout} seconds")
         # Force kill any hanging processes
         import subprocess
         try:
@@ -128,11 +123,9 @@ def get_browser():
         
         try:
             # Try using latest ChromeDriver version
-            print("Attempting to use latest ChromeDriver...")
             service = Service(ChromeDriverManager().install())
             driver = webdriver.Chrome(service=service, options=options)
         except Exception as e:
-            print(f"Latest version failed, trying Selenium Manager: {e}")
             # Fallback to Selenium Manager (no webdriver-manager)
             driver = webdriver.Chrome(options=options)
     
@@ -194,11 +187,9 @@ def test_setup_teardown(request):
                     try:
                         TestHelpers.take_screenshot(driver, f"FAILED_{test_name}")
                     except Exception as e:
-                        print(f"Failed to take screenshot: {str(e)}")
+                        pass
         except Exception as e:
-            print(f"Error in test teardown: {str(e)}")
-        finally:
-            print(f"--- Finished test: {test_name} ---")
+            pass
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):

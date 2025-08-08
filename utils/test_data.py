@@ -76,6 +76,10 @@ class TestData:
     LINKED_BATCHES_VALID_SEARCH_TEXT = "20250807.100017"
     LINKED_BATCHES_INVALID_SEARCH_TEXT = "InvalidLinkedBatchesSearchThatShouldNotExist123!@#"
 
+    # Combobox Search test data
+    COMBOBOX_VALID_SEARCH_TEXT = "100"
+    COMBOBOX_INVALID_SEARCH_TEXT = "InvalidComboboxSearchThatShouldNotExist123!@#"
+
     #Profile Management Page Search test data
     PROFILE_NAME_VALID_SEARCH_TEXT = "BD_NIPU_ALL_CreateCustomsJob (B+CIV)"
     PROFILE_NAME_INVALID_SEARCH_TEXT = "InvalidProfileSearchThatShouldNotExist123!@#"

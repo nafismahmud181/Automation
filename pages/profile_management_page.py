@@ -360,13 +360,6 @@ class ProfileManagementPage(BasePage):
         self.wait_for_loading_complete()
         return bool(self.get_success_message()) and not self.has_validation_errors()
 
-
-    # def get_page_title(self) -> str:
-    #     """Get the current page title"""
-    #     if self.is_element_present(self.PAGE_TITLE):
-    #         return self.get_text(self.PAGE_TITLE)
-    #     return self.driver.title
-
     def get_current_page_url(self) -> str:
         """Get current page URL"""
         return self.driver.current_url

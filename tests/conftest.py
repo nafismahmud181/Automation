@@ -52,22 +52,19 @@ def get_browser_with_timeout(timeout=120):  # 2 minutes timeout
             
             # Try multiple approaches
             try:
-                # First try: specific stable version
-                print("Attempting to use ChromeDriver version 135.0.6930.71...")
-                service = Service(ChromeDriverManager(version="135.0.6930.71").install())
+                # First try: latest version (version parameter not supported in 4.0.1)
+                print("Attempting to use latest ChromeDriver...")
+                service = Service(ChromeDriverManager().install())
                 return webdriver.Chrome(service=service, options=options)
             except Exception as e:
-                print(f"Specific version failed: {e}")
+                print(f"Latest version failed: {e}")
                 try:
-                    # Second try: latest version with timeout
-                    print("Attempting to use latest ChromeDriver...")
-                    service = Service(ChromeDriverManager().install())
-                    return webdriver.Chrome(service=service, options=options)
-                except Exception as e2:
-                    print(f"Latest version failed: {e2}")
-                    # Third try: Let Selenium Manager handle it
+                    # Second try: Let Selenium Manager handle it
                     print("Falling back to Selenium Manager...")
                     return webdriver.Chrome(options=options)
+                except Exception as e2:
+                    print(f"Selenium Manager failed: {e2}")
+                    raise e2
     
     # Use threading to implement timeout
     driver = None
@@ -130,12 +127,12 @@ def get_browser():
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         
         try:
-            # Try using a stable ChromeDriver version (135.x)
-            print("Attempting to use ChromeDriver version 135.0.6930.71...")
-            service = Service(ChromeDriverManager(version="135.0.6930.71").install())
+            # Try using latest ChromeDriver version
+            print("Attempting to use latest ChromeDriver...")
+            service = Service(ChromeDriverManager().install())
             driver = webdriver.Chrome(service=service, options=options)
         except Exception as e:
-            print(f"Specific version failed, trying Selenium Manager: {e}")
+            print(f"Latest version failed, trying Selenium Manager: {e}")
             # Fallback to Selenium Manager (no webdriver-manager)
             driver = webdriver.Chrome(options=options)
     
@@ -180,7 +177,6 @@ def transaction_page(transaction_driver):
 def test_setup_teardown(request):
     """Setup and teardown for each test"""
     test_name = request.node.name
-    print(f"\n--- Starting test: {test_name} ---")
     
     try:
         yield
@@ -224,6 +220,19 @@ def profile_driver(request):
 def profile_management_page(profile_driver):
     """Provide profile management page instance with login handled"""
     from pages.profile_management_page import ProfileManagementPage
+    
+    login_page = LoginPage(profile_driver)
+    login_page.navigate_to_login()
+    credentials = TestData.VALID_USER
+    login_page.login(credentials.username, credentials.password)
+    assert login_page.is_login_successful(), "Login failed, cannot proceed to profile management page"
+    time.sleep(2)
+    return ProfileManagementPage(profile_driver)
+
+@pytest.fixture(scope="class")
+def create_profile_page(profile_driver):
+    """Provide create profile page instance with login handled"""
+    from pages.create_profile_page import ProfileManagementPage
     
     login_page = LoginPage(profile_driver)
     login_page.navigate_to_login()

@@ -14,6 +14,7 @@ from utils.test_data import TestData
 import time
 import signal
 import threading
+import os
 
 class TimeoutError(Exception):
     pass
@@ -49,6 +50,20 @@ def get_browser_with_timeout(timeout=120):  # 2 minutes timeout
             options.add_argument("--remote-debugging-port=9222")
             options.add_experimental_option('excludeSwitches', ['enable-logging'])
             options.add_experimental_option('useAutomationExtension', False)
+
+            # Configure default download directory for Chrome
+            try:
+                from utils.helpers import TestHelpers
+                download_dir = TestHelpers.get_download_dir()
+                prefs = {
+                    "download.default_directory": download_dir,
+                    "download.prompt_for_download": False,
+                    "download.directory_upgrade": True,
+                    "safebrowsing.enabled": True,
+                }
+                options.add_experimental_option("prefs", prefs)
+            except Exception:
+                pass
             
             # Try multiple approaches
             try:
@@ -120,6 +135,20 @@ def get_browser():
         options.add_argument("--ignore-certificate-errors")
         options.add_argument("--disable-notifications")
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
+
+        # Configure default download directory for Chrome
+        try:
+            from utils.helpers import TestHelpers
+            download_dir = TestHelpers.get_download_dir()
+            prefs = {
+                "download.default_directory": download_dir,
+                "download.prompt_for_download": False,
+                "download.directory_upgrade": True,
+                "safebrowsing.enabled": True,
+            }
+            options.add_experimental_option("prefs", prefs)
+        except Exception:
+            pass
         
         try:
             # Try using latest ChromeDriver version
@@ -164,6 +193,12 @@ def transaction_page(transaction_driver):
     login_page.login(credentials.username, credentials.password)
     assert login_page.is_login_successful(), "Login failed, cannot proceed to transaction page"
     time.sleep(2)
+    # Ensure downloads dir is clean at start of class-scoped fixture
+    try:
+        from utils.helpers import TestHelpers
+        TestHelpers.clear_download_dir()
+    except Exception:
+        pass
     return TransactionPage(transaction_driver)
 
 @pytest.fixture(autouse=True)

@@ -28,6 +28,8 @@ class TransactionPage(BasePage):
     SHOW_ENTRY_SEARCH_INPUT = (By.XPATH, "//div[@id='vs2__combobox']//input[@type='search']")
     
     STATUS_SEARCH_INPUT = (By.XPATH, "//*[@data-id='email-batches sort status']")  # I have to think about this one
+
+    BATCH_DELETE_BUTTON = (By.XPATH, "//button[@data-id='email-batch delete']")
     
     SEARCH_RESULTS = (By.XPATH, "//div[@class='search-results']")
     NO_RESULTS_MESSAGE = (By.XPATH, "//div[contains(text(),'No results found')]")
@@ -306,6 +308,22 @@ class TransactionPage(BasePage):
         """
         wait = WebDriverWait(self.driver, timeout)
         return wait.until(EC.visibility_of_element_located(locator))
+
+    def click_download_transaction_by_batch_id(self, batch_id: str):
+        """Click the download transaction action for the given batch ID.
+        Locator pattern: //span[@data-id="email-batch {batch_id} action download-transaction"]
+        """
+        dynamic_locator = (
+            By.XPATH,
+            f"//span[@data-id='email-batch {batch_id} action download-transaction']",
+        )
+        wait = WebDriverWait(self.driver, 20)
+        element = wait.until(EC.element_to_be_clickable(dynamic_locator))
+        try:
+            element.click()
+        except Exception:
+            # Fallback to JavaScript click if standard click fails due to overlays
+            self.driver.execute_script("arguments[0].click();", element)
 
     def is_upload_successful(self):
         """

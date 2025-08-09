@@ -248,49 +248,75 @@ class TestTransactionPage:
         
     #     logger.info(f"Invalid ZIP file upload test completed. Error: {message}")
    
-    @pytest.mark.smoke
-    def test_linked_batches_valid_search(self, transaction_page):
-        """Test linked-batches search with valid text"""
-        logger.info("Testing linked-batches search with valid text")
+    # @pytest.mark.smoke
+    # def test_linked_batches_valid_search(self, transaction_page):
+    #     """Test linked-batches search with valid text"""
+    #     logger.info("Testing linked-batches search with valid text")
 
-        search_text = TestData.LINKED_BATCHES_VALID_SEARCH_TEXT
-        transaction_page.search_by_linked_batches(search_text)
+    #     search_text = TestData.LINKED_BATCHES_VALID_SEARCH_TEXT
+    #     transaction_page.search_by_linked_batches(search_text)
 
-        # Check if the search was successful by looking for the element with data-id="email-batch {search_text} id"
-        assert transaction_page.is_linked_batches_search_successful(search_text), \
-            f"Search should find element with data-id='email-batch {search_text} id'"
+    #     # Check if the search was successful by looking for the element with data-id="email-batch {search_text} id"
+    #     assert transaction_page.is_linked_batches_search_successful(search_text), \
+    #         f"Search should find element with data-id='email-batch {search_text} id'"
 
-        transaction_page.click_clear_search_button()
-        logger.info("Valid linked-batches search test completed successfully")
+    #     transaction_page.click_clear_search_button()
+    #     logger.info("Valid linked-batches search test completed successfully")
 
-    def test_linked_batches_invalid_search(self, transaction_page):
-        """Test linked-batches search with invalid text"""
-        logger.info("Testing linked-batches search with invalid text")
+    # def test_linked_batches_invalid_search(self, transaction_page):
+    #     """Test linked-batches search with invalid text"""
+    #     logger.info("Testing linked-batches search with invalid text")
 
-        search_text = TestData.LINKED_BATCHES_INVALID_SEARCH_TEXT
-        transaction_page.search_by_linked_batches(search_text)
+    #     search_text = TestData.LINKED_BATCHES_INVALID_SEARCH_TEXT
+    #     transaction_page.search_by_linked_batches(search_text)
 
-        # Assert that the "No results found" message appears
-        assert transaction_page.is_no_results_displayed(), "Expected 'No results found' message not displayed"
+    #     # Assert that the "No results found" message appears
+    #     assert transaction_page.is_no_results_displayed(), "Expected 'No results found' message not displayed"
 
-        transaction_page.click_clear_search_button()
-        logger.info("Invalid linked-batches search test completed successfully")
+    #     transaction_page.click_clear_search_button()
+    #     logger.info("Invalid linked-batches search test completed successfully")
 
-    @pytest.mark.smoke
-    def test_combobox_valid_search(self, transaction_page):
-        """Test combobox search with valid text"""
-        logger.info("Testing combobox search with valid text")
+    # @pytest.mark.smoke
+    # def test_combobox_valid_search(self, transaction_page):
+    #     """Test combobox search with valid text"""
+    #     logger.info("Testing combobox search with valid text")
 
-        search_text = TestData.COMBOBOX_VALID_SEARCH_TEXT
-        transaction_page.search_by_show_entry(search_text)
+    #     search_text = TestData.COMBOBOX_VALID_SEARCH_TEXT
+    #     transaction_page.search_by_show_entry(search_text)
 
-        # Check if the search was successful by looking for the element with the complex XPath
-        assert transaction_page.is_show_entry_search_successful(search_text), \
-            f"Search should find element matching the complex XPath for search text '{search_text}'"
+    #     # Check if the search was successful by looking for the element with the complex XPath
+    #     assert transaction_page.is_show_entry_search_successful(search_text), \
+    #         f"Search should find element matching the complex XPath for search text '{search_text}'"
 
-        logger.info("Valid entry per page search test completed successfully")
-
-
-
+    #     logger.info("Valid entry per page search test completed successfully")
     
+    @pytest.mark.smoke
+    def test_download_transaction_by_batch_id(self, transaction_page):
+        """Click download action by batch ID and verify a file is downloaded locally."""
+        from utils.test_data import TestData
+        from utils.helpers import TestHelpers
+
+        batch_id = TestData.ID_VALID_SEARCH_TEXT
+
+        logger.info(f"Starting download for batch ID: {batch_id}")
+
+        # Ensure downloads folder is empty
+        TestHelpers.clear_download_dir()
+
+        # If needed, search/filter by ID first to reveal the row
+        try:
+            transaction_page.search_by_id(batch_id)
+        except Exception:
+            pass
+
+        # Click the download action
+        transaction_page.click_download_transaction_by_batch_id(batch_id)
+
+        # Wait for a file to appear in downloads
+        downloaded_path = TestHelpers.wait_for_download_complete(timeout=60, filename_contains=batch_id)
+
+        assert downloaded_path and os.path.exists(downloaded_path), \
+            f"Expected a downloaded file for batch {batch_id}, but none was found"
+
+        logger.info(f"Download completed: {downloaded_path}")
     

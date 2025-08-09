@@ -247,7 +247,7 @@ class TestTransactionPage:
     #         f"Expected invalid ZIP error message, got: {message}"
         
     #     logger.info(f"Invalid ZIP file upload test completed. Error: {message}")
-
+   
     @pytest.mark.smoke
     def test_linked_batches_valid_search(self, transaction_page):
         """Test linked-batches search with valid text"""
@@ -282,27 +282,15 @@ class TestTransactionPage:
         logger.info("Testing combobox search with valid text")
 
         search_text = TestData.COMBOBOX_VALID_SEARCH_TEXT
-        transaction_page.search_by_combobox(search_text)
+        transaction_page.search_by_show_entry(search_text)
 
         # Check if the search was successful by looking for the element with the complex XPath
-        assert transaction_page.is_combobox_search_successful(search_text), \
+        assert transaction_page.is_show_entry_search_successful(search_text), \
             f"Search should find element matching the complex XPath for search text '{search_text}'"
 
-   
-        logger.info("Valid combobox search test completed successfully")
+        logger.info("Valid entry per page search test completed successfully")
 
-    # def test_combobox_invalid_search(self, transaction_page):
-    #     """Test combobox search with invalid text"""
-    #     logger.info("Testing combobox search with invalid text")
 
-    #     search_text = TestData.COMBOBOX_INVALID_SEARCH_TEXT
-    #     transaction_page.search_by_combobox(search_text)
-
-    #     # Assert that the "No results found" message appears
-    #     assert transaction_page.is_no_results_displayed(), "Expected 'No results found' message not displayed"
-
-    #     transaction_page.click_clear_search_button()
-    #     logger.info("Invalid combobox search test completed successfully")
 
     
     

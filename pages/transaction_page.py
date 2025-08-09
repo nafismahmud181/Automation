@@ -25,7 +25,7 @@ class TransactionPage(BasePage):
     
     LINKED_BATCHES_SEARCH_INPUT = (By.XPATH, "//input[@data-id='email-batches search linked-batches']")
     
-    COMBOBOX_SEARCH_INPUT = (By.XPATH, "//div[@id='vs2__combobox']//input[@type='search']")
+    SHOW_ENTRY_SEARCH_INPUT = (By.XPATH, "//div[@id='vs2__combobox']//input[@type='search']")
     
     STATUS_SEARCH_INPUT = (By.XPATH, "//*[@data-id='email-batches sort status']")  # I have to think about this one
     
@@ -96,10 +96,10 @@ class TransactionPage(BasePage):
         search_box.send_keys(text)
         search_box.send_keys(Keys.RETURN)
 
-    def search_by_combobox(self, text: str):
-        """Search by combobox"""
+    def search_by_show_entry(self, text: str):
+        """Search by entry"""
         wait = WebDriverWait(self.driver, 10)
-        search_box = wait.until(EC.element_to_be_clickable(self.COMBOBOX_SEARCH_INPUT))
+        search_box = wait.until(EC.element_to_be_clickable(self.SHOW_ENTRY_SEARCH_INPUT))
         search_box.clear()
         search_box.send_keys(text)
         search_box.send_keys(Keys.RETURN)
@@ -188,7 +188,7 @@ class TransactionPage(BasePage):
         except TimeoutException:
             return False
 
-    def is_combobox_search_successful(self, search_text: str):
+    def is_show_entry_search_successful(self, search_text: str):
         """
         Check if combobox search was successful by verifying the element with the complex XPath is found
         """

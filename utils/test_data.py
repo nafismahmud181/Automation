@@ -53,7 +53,7 @@ class TestData:
     )
     #Transaction Page Search test data
     #ID Search test data
-    ID_VALID_SEARCH_TEXT = "20250721.00005"
+    ID_VALID_SEARCH_TEXT = "20250723.U04246"
     ID_INVALID_SEARCH_TEXT = "InvalidSearchThatShouldNotExist123!@#"
 
     # Email From Search test data

@@ -203,27 +203,27 @@ class TestTransactionPage:
     #     logger.info("Invalid Email subject search test completed successfully")
 
    
-    # def test_batch_upload_valid_file(self, transaction_page):
-    #     """Test batch upload with nvalid ZIP file"""
-    #     logger.info("Testing batch upload with nvalid ZIP file")
+    def test_batch_upload_valid_file(self, transaction_page):
+        """Test batch upload with nvalid ZIP file"""
+        logger.info("Testing batch upload with valid ZIP file")
         
-    #     valid_file_path = os.path.join(os.getcwd(), "assets", "20250723.U04246.zip")
+        valid_file_path = os.path.join(os.getcwd(), "assets", "20250723.U04246.zip")
         
-    #     # Skip if test file not available
-    #     if not os.path.exists(valid_file_path):
-    #         pytest.skip(f"nvalid ZIP file not found: {valid_file_path}")
+        # Skip if test file not available
+        if not os.path.exists(valid_file_path):
+            pytest.skip(f"nvalid ZIP file not found: {valid_file_path}")
         
-    #     # Perform batch upload with invalid file
-    #     transaction_page.perform_batch_upload(valid_file_path)
+        # Perform batch upload with invalid file
+        transaction_page.perform_batch_upload(valid_file_path)
         
-    #     # Get upload result message
-    #     message = transaction_page.get_upload_message(timeout=10)
+        # Get upload result message
+        message = transaction_page.get_upload_message(timeout=10)
         
-    #     # Verify error message
-    #     # assert "Invalid Zip file. Zip should contain db_data.json" in message, \
-    #     #     f"Expected invalid ZIP error message, got: {message}"
+        # Verify error message
+        # assert "Invalid Zip file. Zip should contain db_data.json" in message, \
+        #     f"Expected invalid ZIP error message, got: {message}"
         
-    #     logger.info(f"Valid ZIP file upload test completed. Error: {message}")
+        logger.info(f"Valid ZIP file upload test completed. Error: {message}")
 
 
     # def test_batch_upload_invalid_file(self, transaction_page):
@@ -290,33 +290,57 @@ class TestTransactionPage:
 
     #     logger.info("Valid entry per page search test completed successfully")
     
+    # @pytest.mark.smoke
+    # def test_download_transaction_by_batch_id(self, transaction_page):
+    #     """Click download action by batch ID and verify a file is downloaded locally."""
+    #     from utils.test_data import TestData
+    #     from utils.helpers import TestHelpers
+
+    #     batch_id = TestData.ID_VALID_SEARCH_TEXT
+
+    #     logger.info(f"Starting download for batch ID: {batch_id}")
+
+    #     # Ensure downloads folder is empty
+    #     TestHelpers.clear_download_dir()
+
+    #     # If needed, search/filter by ID first to reveal the row
+    #     try:
+    #         transaction_page.search_by_id(batch_id)
+    #     except Exception:
+    #         pass
+
+    #     # Click the download action
+    #     transaction_page.click_download_transaction_by_batch_id(batch_id)
+
+    #     # Wait for a file to appear in downloads
+    #     downloaded_path = TestHelpers.wait_for_download_complete(timeout=60, filename_contains=batch_id)
+
+    #     assert downloaded_path and os.path.exists(downloaded_path), \
+    #         f"Expected a downloaded file for batch {batch_id}, but none was found"
+
+    #     logger.info(f"Download completed: {downloaded_path}")
+
     @pytest.mark.smoke
-    def test_download_transaction_by_batch_id(self, transaction_page):
-        """Click download action by batch ID and verify a file is downloaded locally."""
+    def test_delete_transaction_by_batch_id(self, transaction_page):
+        """Delete by batch ID, confirm popup, and verify success message appears."""
         from utils.test_data import TestData
-        from utils.helpers import TestHelpers
 
         batch_id = TestData.ID_VALID_SEARCH_TEXT
+        logger.info(f"Attempting to delete batch ID: {batch_id}")
 
-        logger.info(f"Starting download for batch ID: {batch_id}")
-
-        # Ensure downloads folder is empty
-        TestHelpers.clear_download_dir()
-
-        # If needed, search/filter by ID first to reveal the row
+        # Filter to ensure row is visible
         try:
             transaction_page.search_by_id(batch_id)
         except Exception:
             pass
 
-        # Click the download action
-        transaction_page.click_download_transaction_by_batch_id(batch_id)
+        # Click delete action and confirm
+        transaction_page.click_delete_transaction_by_batch_id(batch_id)
+        transaction_page.confirm_delete()
 
-        # Wait for a file to appear in downloads
-        downloaded_path = TestHelpers.wait_for_download_complete(timeout=60, filename_contains=batch_id)
-
-        assert downloaded_path and os.path.exists(downloaded_path), \
-            f"Expected a downloaded file for batch {batch_id}, but none was found"
-
-        logger.info(f"Download completed: {downloaded_path}")
+        # Assert success toast/message
+        assert transaction_page.is_delete_successful(timeout=30), \
+            "Expected delete success message was not displayed"
+        
+        logger.info(f"Successfully deleted batch ID: {batch_id}")
     

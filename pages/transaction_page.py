@@ -34,6 +34,8 @@ class TransactionPage(BasePage):
     SEARCH_RESULTS = (By.XPATH, "//div[@class='search-results']")
     NO_RESULTS_MESSAGE = (By.XPATH, "//div[contains(text(),'No results found')]")
     CLEAR_SEARCH_BUTTON = (By.XPATH, "//button[@data-id='email-batch-clearSearch']")
+    DELETE_CONFIRM_BUTTON = (By.XPATH, "//button[normalize-space()='Delete']")
+    DELETE_SUCCESS_MESSAGE = (By.XPATH, "//h5[normalize-space()='Email Batch deleted sucessfully']")
     
     # Upload Locators
     UPLOAD_BUTTON = (By.XPATH, "//button[normalize-space()='Upload Transaction']")
@@ -324,6 +326,38 @@ class TransactionPage(BasePage):
         except Exception:
             # Fallback to JavaScript click if standard click fails due to overlays
             self.driver.execute_script("arguments[0].click();", element)
+
+    def click_delete_transaction_by_batch_id(self, batch_id: str):
+        """Click the delete action for the given batch ID.
+        Locator pattern: //span[@data-id="email-batch {batch_id} action delete"]
+        """
+        dynamic_locator = (
+            By.XPATH,
+            f"//span[@data-id='email-batch {batch_id} action delete']",
+        )
+        wait = WebDriverWait(self.driver, 20)
+        element = wait.until(EC.element_to_be_clickable(dynamic_locator))
+        try:
+            element.click()
+        except Exception:
+            self.driver.execute_script("arguments[0].click();", element)
+
+    def confirm_delete(self):
+        """Confirm deletion in the popup dialog by clicking Delete button"""
+        wait = WebDriverWait(self.driver, 20)
+        button = wait.until(EC.element_to_be_clickable(self.DELETE_CONFIRM_BUTTON))
+        try:
+            button.click()
+        except Exception:
+            self.driver.execute_script("arguments[0].click();", button)
+
+    def is_delete_successful(self, timeout: int = 30) -> bool:
+        """Return True if delete success message appears"""
+        try:
+            self.wait_for_element(self.DELETE_SUCCESS_MESSAGE, timeout=timeout)
+            return True
+        except TimeoutException:
+            return False
 
     def is_upload_successful(self):
         """

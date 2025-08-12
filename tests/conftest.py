@@ -108,7 +108,15 @@ def get_browser_with_timeout(timeout=120):  # 2 minutes timeout
     
     if driver:
         driver.implicitly_wait(config.IMPLICIT_WAIT)
-        driver.maximize_window()
+        if config.WINDOW_SIZE == 'maximize':
+            driver.maximize_window()
+        else:
+            try:
+                width, height = config.WINDOW_SIZE.split('x')
+                driver.set_window_size(int(width), int(height))
+                driver.set_window_position(0, 0)
+            except (ValueError, AttributeError):
+                driver.maximize_window()
         return driver
     else:
         raise Exception("Failed to create driver")
@@ -159,7 +167,15 @@ def get_browser():
             driver = webdriver.Chrome(options=options)
     
     driver.implicitly_wait(config.IMPLICIT_WAIT)
-    driver.maximize_window()
+    if config.WINDOW_SIZE == 'maximize':
+        driver.maximize_window()
+    else:
+        try:
+            width, height = config.WINDOW_SIZE.split('x')
+            driver.set_window_size(int(width), int(height))
+            driver.set_window_position(0, 0)
+        except (ValueError, AttributeError):
+            driver.maximize_window()
     return driver
 
 # Rest of the fixtures remain the same...

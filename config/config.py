@@ -9,6 +9,6 @@ class TestConfig:
     IMPLICIT_WAIT: int = int(os.getenv('IMPLICIT_WAIT', '10'))
     EXPLICIT_WAIT: int = int(os.getenv('EXPLICIT_WAIT', '20'))
     SCREENSHOT_ON_FAILURE: bool = True
-    WINDOW_SIZE: str = os.getenv('WINDOW_SIZE', 'maximize')
+    WINDOW_SIZE: str = os.getenv('WINDOW_SIZE', '1440x810')
     
 config = TestConfig()

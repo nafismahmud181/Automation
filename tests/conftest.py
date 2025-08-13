@@ -272,6 +272,27 @@ def profile_management_page(profile_driver):
     return ProfileManagementPage(profile_driver)
 
 @pytest.fixture(scope="class")
+def batch_editor_driver(request):
+    """Dedicated driver for batch editor tests"""
+    driver = get_browser()
+    request.cls.driver = driver
+    yield driver
+    driver.quit()
+
+@pytest.fixture(scope="class")
+def batch_editor_page(batch_editor_driver):
+    """Provide batch editor page instance with login handled"""
+    from pages.batch_editor_page import BatchEditorPage
+    
+    login_page = LoginPage(batch_editor_driver)
+    login_page.navigate_to_login()
+    credentials = TestData.VALID_USER
+    login_page.login(credentials.username, credentials.password)
+    assert login_page.is_login_successful(), "Login failed, cannot proceed to batch editor page"
+    time.sleep(2)
+    return BatchEditorPage(batch_editor_driver)
+
+@pytest.fixture(scope="class")
 def create_profile_page(profile_driver):
     """Provide create profile page instance with login handled"""
     from pages.create_profile_page import ProfileManagementPage

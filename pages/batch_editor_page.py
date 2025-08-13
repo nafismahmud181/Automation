@@ -6,7 +6,6 @@ from config.config import config
 from selenium.common.exceptions import TimeoutException
 
 class BatchEditorPage(BasePage):
-    # Batch Editor Locators
     ADD_COUNT_BUTTON = (By.XPATH, "//button[@data-id='add-count-button']")
     
     def __init__(self, driver):
@@ -40,3 +39,5 @@ class BatchEditorPage(BasePage):
             button.click()
         else:
             raise TimeoutException("Add count button not found on the page")
+
+    

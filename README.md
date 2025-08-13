@@ -26,3 +26,12 @@ pytest tests/test_login.py
 
 # Run specific test method
 pytest tests/test_login.py::TestLogin::test_valid_login
+
+# Run ALL tests (no filter)
+pytest -v
+
+# Run specific test categories
+pytest -m login -v          # Only login tests
+pytest -m transaction -v    # Only transaction tests
+pytest -m profile -v        # Only profile tests
+pytest -m smoke -v          # All smoke-marked tests across categories

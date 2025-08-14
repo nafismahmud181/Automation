@@ -31,12 +31,13 @@ class TestBatchEditorPage:
         logger.info("Testing add-count-button clickability")
         
         # Navigate to the batch editor page
-        batch_editor_page.navigate_to_batch_editor()
+        # batch_editor_page.navigate_to_batch_editor()
         
         # Wait for the button to be clickable
         try:
             button = batch_editor_page.wait_for_add_count_button(timeout=20)
             assert button.is_enabled(), "Add count button should be enabled"
             logger.info("Add count button is clickable and enabled")
+            time.sleep(20)
         except TimeoutException:
             pytest.fail("Add count button should be clickable within 20 seconds")

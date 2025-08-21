@@ -28,6 +28,10 @@ class TestProfileManagement:
       print(f"Successfully navigated to: {current_url}")
       logger.info(f"Successfully navigated to: {current_url}")
       print("1st test finish")
+      
+      # Force close the transaction menu as the final step of this test
+      create_profile_page.force_close_transaction_menu()
+      logger.info("Transaction menu forcefully closed by first test")
 
   @pytest.mark.smoke
   def test_customer_name_validation_error(self, create_profile_page):

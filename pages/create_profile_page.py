@@ -61,8 +61,6 @@ class ProfileManagementPage(BasePage):
         success = self.click_create_profile()
         if success:
             self.wait_for_page_load()
-            # Force close any remaining open menus
-            self.force_close_transaction_menu()
         return success
   
   def wait_for_page_load(self, timeout=30):
@@ -113,8 +111,6 @@ class ProfileManagementPage(BasePage):
                 return False
 
         time.sleep(2)
-        
-        self.force_close_transaction_menu()
         
         return True
 
@@ -175,12 +171,6 @@ class ProfileManagementPage(BasePage):
       # Wait for elements to be present and clickable
       wait = WebDriverWait(self.driver, 10)
       
-      # Force close the transaction menu first
-      self.force_close_transaction_menu()
-      
-      # Additional wait to ensure menu is fully closed
-      time.sleep(2)
-      
       # First click on customer name input field
       customer_name_field = wait.until(
         EC.presence_of_element_located(self.CUSTOMER_NAME_INPUT)
@@ -188,10 +178,6 @@ class ProfileManagementPage(BasePage):
       
       # Scroll the element into view
       self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", customer_name_field)
-      time.sleep(1)
-      
-      # Force close menu again right before clicking
-      self.force_close_transaction_menu()
       time.sleep(1)
       
       # Try multiple click strategies

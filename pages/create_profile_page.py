@@ -19,6 +19,8 @@ class ProfileManagementPage(BasePage):
   PROJECT_SELECTED = (By.XPATH, "//*[@data-id='profile-create project']//span[@class='vs__selected'][1]")
   DOCUMENT_0_DOC_TYPE_INPUT = (By.XPATH, "//*[@data-id='profile-create document-0 doc-type-input']")
   NO_PROJECT_DOC_TYPE_ERROR = (By.XPATH, "//small[normalize-space()='Please select a \"Project\" to view document types']")
+  NONE_SPAN = (By.XPATH, "//span[normalize-space()='None']")
+  NAME_MATCHING_TEXT_DISABLED_INPUT = (By.XPATH, "//input[@data-id='profile-create document-0 name-matching-text' and @disabled]")
 
   def __init__(self, driver):
     super().__init__(driver)
@@ -325,6 +327,45 @@ class ProfileManagementPage(BasePage):
         
     except Exception as e:
       print(f"Error in test_document_type_validation_without_project: {e}")
+      return False
+
+  def check_name_matching_text_disabled(self):
+    """Check if 'None' span exists and name matching text input is disabled"""
+    try:
+      wait = WebDriverWait(self.driver, 10)
+      
+      # First check if the 'None' span exists
+      try:
+        none_span = self.driver.find_element(*self.NONE_SPAN)
+        if not none_span.is_displayed():
+          print("'None' span exists but is not displayed")
+          return False
+        print("'None' span found and is displayed")
+      except:
+        print("'None' span not found")
+        return False
+      
+      # Then check if the name matching text input exists and is disabled
+      try:
+        disabled_input = self.driver.find_element(*self.NAME_MATCHING_TEXT_DISABLED_INPUT)
+        if not disabled_input.is_displayed():
+          print("Name matching text input exists but is not displayed")
+          return False
+        
+        # Check if the input is actually disabled
+        if not disabled_input.get_attribute("disabled"):
+          print("Name matching text input is not disabled")
+          return False
+        
+        print("Name matching text input found, displayed, and disabled")
+        return True
+        
+      except:
+        print("Name matching text input not found or not disabled")
+        return False
+        
+    except Exception as e:
+      print(f"Error in check_name_matching_text_disabled: {e}")
       return False
         
 

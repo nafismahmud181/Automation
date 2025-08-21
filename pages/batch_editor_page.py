@@ -11,7 +11,7 @@ class BatchEditorPage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
         # Specific batch URL after successful login
-        self.url = f"{config.BASE_URL}/batch/20250813.100053"
+        self.url = f"{config.BASE_URL}/batch/20250813.U100053"
     
     def navigate_to_batch_editor(self):
         """Navigate to the specific batch editor page"""

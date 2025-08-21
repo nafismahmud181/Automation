@@ -13,7 +13,9 @@ class ProfileManagementPage(BasePage):
   TRANSACTION_MENU = (By.XPATH, "//*[@data-id='nav-group-toggle-home']")
   CREATE_PROFILE_LINK = (By.XPATH, "//li[@data-id='nav-group-item-create-profile']/a")
   CREATE_PROFILE_HEADER = (By.XPATH, "//h2[normalize-space()='Create Profile']")
-  customer_name_input = (By.XPATH, "//*[@data-id='profile-create customer-name']")
+  CUSTOMER_NAME_INPUT = (By.XPATH, "//*[@data-id='profile-create customer-name']")
+  PROJECT_SEARCH_INPUT = (By.XPATH, "//*[@data-id='project-search-input']")
+  CUSTOMER_NAME_ERROR = (By.XPATH, "//*[@data-id='customer-name-error']")
 
   def __init__(self, driver):
     super().__init__(driver)
@@ -148,4 +150,53 @@ class ProfileManagementPage(BasePage):
     """Get current page URL"""
     return self.driver.current_url
 
-  
+  def test_customer_name_validation_error(self):
+    """Test that customer name validation error appears when clicking customer name input then project search input"""
+    try:
+      # Wait for elements to be present and clickable
+      wait = WebDriverWait(self.driver, 10)
+      
+      # First click on customer name input field
+      customer_name_field = wait.until(
+        EC.element_to_be_clickable(self.CUSTOMER_NAME_INPUT)
+      )
+      
+      # Try normal click first, fallback to JavaScript click
+      try:
+        customer_name_field.click()
+      except Exception as e:
+        print(f"Normal click failed, trying JavaScript click: {e}")
+        self.driver.execute_script("arguments[0].click();", customer_name_field)
+      
+      time.sleep(1)
+      
+      # Then click on project search input field
+      project_search_field = wait.until(
+        EC.element_to_be_clickable(self.PROJECT_SEARCH_INPUT)
+      )
+      
+      # Try normal click first, fallback to JavaScript click
+      try:
+        project_search_field.click()
+      except Exception as e:
+        print(f"Normal click failed, trying JavaScript click: {e}")
+        self.driver.execute_script("arguments[0].click();", project_search_field)
+      
+      time.sleep(2)  # Wait a bit longer for validation to trigger
+      
+      # Check if customer name error appears
+      try:
+        error_element = wait.until(
+          EC.presence_of_element_located(self.CUSTOMER_NAME_ERROR)
+        )
+        return error_element.is_displayed()
+      except TimeoutException:
+        print("Customer name error element not found within timeout")
+        return False
+        
+    except Exception as e:
+      print(f"Error in test_customer_name_validation_error: {e}")
+      return False
+        
+
+ 

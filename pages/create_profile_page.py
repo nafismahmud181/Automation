@@ -416,3 +416,116 @@ class ProfileManagementPage(BasePage):
     except Exception as e:
       print(f"Error in test_manual_validation_switch_when_project_empty: {e}")
       return False
+
+  def test_project_search_and_manual_validation_switch(self):
+    """Test project search with 'Shipmentcreate' and verify manual validation switch is turned off"""
+    try:
+      wait = WebDriverWait(self.driver, 10)
+      
+      # First check if project is empty or selected
+      project_is_empty = False
+      project_is_selected = False
+      
+      try:
+        empty_project = self.driver.find_element(*self.PROJECT_IS_EMPTY)
+        if empty_project.is_displayed():
+          project_is_empty = True
+          print("Project is empty")
+      except:
+        print("Project empty element not found")
+      
+      try:
+        selected_project = self.driver.find_element(*self.PROJECT_IS_SELECTED)
+        if selected_project.is_displayed():
+          project_is_selected = True
+          print("Project is selected")
+      except:
+        print("Project selected element not found")
+      
+      # If project is not empty (i.e., project is selected), skip the test
+      if not project_is_empty or project_is_selected:
+        print("Project is selected or not in empty state, test not applicable")
+        return "SKIPPED"
+      
+      # If project is empty, proceed with project search
+      try:
+        # Click on project search input field
+        project_search_field = wait.until(
+          EC.element_to_be_clickable(self.PROJECT_SEARCH_INPUT)
+        )
+        
+        # Scroll the element into view
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", project_search_field)
+        time.sleep(1)
+        
+        # Try multiple click strategies
+        click_success = False
+        
+        # Strategy 1: Normal click
+        try:
+          project_search_field.click()
+          click_success = True
+          print("Normal click successful on project search field")
+        except Exception as e:
+          print(f"Normal click failed: {e}")
+          
+          # Strategy 2: JavaScript click
+          try:
+            self.driver.execute_script("arguments[0].click();", project_search_field)
+            click_success = True
+            print("JavaScript click successful on project search field")
+          except Exception as js_e:
+            print(f"JavaScript click failed: {js_e}")
+            
+            # Strategy 3: ActionChains click
+            try:
+              actions = ActionChains(self.driver)
+              actions.move_to_element(project_search_field).click().perform()
+              click_success = True
+              print("ActionChains click successful on project search field")
+            except Exception as ac_e:
+              print(f"ActionChains click failed: {ac_e}")
+        
+        if not click_success:
+          print("All click strategies failed for project search field")
+          return False
+        
+        time.sleep(1)
+        
+        # Clear any existing text and input "Shipmentcreate"
+        project_search_field.clear()
+        project_search_field.send_keys("Shipmentcreate")
+        print("Entered 'Shipmentcreate' in project search field")
+        time.sleep(1)
+        
+        # Press Enter key
+        project_search_field.send_keys(Keys.ENTER)
+        print("Pressed Enter key")
+        time.sleep(3)  # Wait for the search results and any UI updates
+        
+        # Now check if manual validation switch is turned off
+        manual_validation_switch = wait.until(
+          EC.presence_of_element_located(self.MANUAL_VALIDATION_SWITCH)
+        )
+        
+        # Scroll the element into view
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", manual_validation_switch)
+        time.sleep(1)
+        
+        # Check if the switch is checked (turned off means not selected)
+        is_checked = manual_validation_switch.is_selected()
+        
+        if not is_checked:
+          print("Manual validation switch is turned off - Test successful")
+          return True
+        else:
+          print("Manual validation switch is turned on - Test failed")
+          return False
+          
+      except TimeoutException:
+        print("Element not found within timeout during project search test")
+        return False
+        
+    except Exception as e:
+      print(f"Error in test_project_search_and_manual_validation_switch: {e}")
+      return False

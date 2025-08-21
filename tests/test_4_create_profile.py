@@ -132,3 +132,30 @@ class TestProfileManagement:
       else:
           assert result, "Manual validation switch is not turned on when project is empty"
           logger.info("Manual validation switch test completed successfully")
+
+  @pytest.mark.smoke
+  def test_project_search_and_manual_validation_switch(self, create_profile_page):
+      """Test project search with 'Shipmentcreate' and verify manual validation switch is turned off"""
+      logger.info("Testing project search with 'Shipmentcreate' and manual validation switch verification")
+      
+      # Check if we're already on the Create Profile page
+      if not create_profile_page.is_create_profile_page_loaded():
+          # Only navigate if we're not already on the page
+          success = create_profile_page.navigate_to_create_profile_page()
+          assert success, "Failed to navigate to Create Profile page"
+          logger.info("Navigated to Create Profile page")
+      else:
+          logger.info("Already on Create Profile page, skipping navigation")
+      
+      # Verify we're on the correct page
+      assert create_profile_page.is_create_profile_page_loaded(), "Create Profile page not loaded properly"
+      
+      # Test the project search and manual validation switch scenario
+      result = create_profile_page.test_project_search_and_manual_validation_switch()
+      
+      if result == "SKIPPED":
+          logger.info("Test skipped - Project is selected or not in empty state")
+          pytest.skip("Project is selected or not in empty state, test not applicable")
+      else:
+          assert result, "Manual validation switch is not turned off after searching for 'Shipmentcreate'"
+          logger.info("Project search and manual validation switch test completed successfully")

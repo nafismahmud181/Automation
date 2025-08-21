@@ -105,3 +105,30 @@ class TestProfileManagement:
       assert result, "Name matching text disabled check failed"
       
       logger.info("Name matching text disabled test completed successfully")
+
+  @pytest.mark.smoke
+  def test_manual_validation_switch_when_project_empty(self, create_profile_page):
+      """Test that manual validation switch is turned on when project is empty"""
+      logger.info("Testing manual validation switch when project is empty")
+      
+      # Check if we're already on the Create Profile page
+      if not create_profile_page.is_create_profile_page_loaded():
+          # Only navigate if we're not already on the page
+          success = create_profile_page.navigate_to_create_profile_page()
+          assert success, "Failed to navigate to Create Profile page"
+          logger.info("Navigated to Create Profile page")
+      else:
+          logger.info("Already on Create Profile page, skipping navigation")
+      
+      # Verify we're on the correct page
+      assert create_profile_page.is_create_profile_page_loaded(), "Create Profile page not loaded properly"
+      
+      # Test the manual validation switch scenario
+      result = create_profile_page.test_manual_validation_switch_when_project_empty()
+      
+      if result == "SKIPPED":
+          logger.info("Test skipped - Project is selected or not in empty state")
+          pytest.skip("Project is selected or not in empty state, test not applicable")
+      else:
+          assert result, "Manual validation switch is not turned on when project is empty"
+          logger.info("Manual validation switch test completed successfully")

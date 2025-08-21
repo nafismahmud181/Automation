@@ -21,6 +21,11 @@ class ProfileManagementPage(BasePage):
   NO_PROJECT_DOC_TYPE_ERROR = (By.XPATH, "//small[normalize-space()='Please select a \"Project\" to view document types']")
   NONE_SPAN = (By.XPATH, "//span[normalize-space()='None']")
   NAME_MATCHING_TEXT_DISABLED_INPUT = (By.XPATH, "//input[@data-id='profile-create document-0 name-matching-text' and @disabled]")
+  
+  # New locators for project status and manual validation
+  PROJECT_IS_EMPTY = (By.XPATH, "//div[@data-id='profile-create project']//div[@class='vs__selected-options' and not(span[@class='vs__selected'])]")
+  PROJECT_IS_SELECTED = (By.XPATH, "//div[@data-id='profile-create project']//div[@class='vs__selected-options']/span[@class='vs__selected']")
+  MANUAL_VALIDATION_SWITCH = (By.XPATH, "//input[@data-id='profile-create manual-validation']")
 
   def __init__(self, driver):
     super().__init__(driver)
@@ -353,6 +358,61 @@ class ProfileManagementPage(BasePage):
     except Exception as e:
       print(f"Error in check_name_matching_text_disabled: {e}")
       return False
-        
 
- 
+  def test_manual_validation_switch_when_project_empty(self):
+    """Test that manual validation switch is turned on when project is empty"""
+    try:
+      wait = WebDriverWait(self.driver, 10)
+      
+      # First check if project is empty or selected
+      project_is_empty = False
+      project_is_selected = False
+      
+      try:
+        empty_project = self.driver.find_element(*self.PROJECT_IS_EMPTY)
+        if empty_project.is_displayed():
+          project_is_empty = True
+          print("Project is empty")
+      except:
+        print("Project empty element not found")
+      
+      try:
+        selected_project = self.driver.find_element(*self.PROJECT_IS_SELECTED)
+        if selected_project.is_displayed():
+          project_is_selected = True
+          print("Project is selected")
+      except:
+        print("Project selected element not found")
+      
+      # If project is not empty (i.e., project is selected), skip the test
+      if not project_is_empty or project_is_selected:
+        print("Project is selected or not in empty state, test not applicable")
+        return "SKIPPED"
+      
+      # If project is empty, check if manual validation switch is turned on
+      try:
+        manual_validation_switch = wait.until(
+          EC.presence_of_element_located(self.MANUAL_VALIDATION_SWITCH)
+        )
+        
+        # Scroll the element into view
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", manual_validation_switch)
+        time.sleep(1)
+        
+        # Check if the switch is checked (turned on)
+        is_checked = manual_validation_switch.is_selected()
+        
+        if is_checked:
+          print("Manual validation switch is turned on")
+          return True
+        else:
+          print("Manual validation switch is turned off")
+          return False
+          
+      except TimeoutException:
+        print("Manual validation switch not found within timeout")
+        return False
+        
+    except Exception as e:
+      print(f"Error in test_manual_validation_switch_when_project_empty: {e}")
+      return False

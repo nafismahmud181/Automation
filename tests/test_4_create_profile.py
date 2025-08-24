@@ -183,19 +183,16 @@ class TestProfileManagement:
     """Test that all validation errors appear when clicking submit button without filling required fields"""
     logger.info("Testing submit button validation errors")
     
-    # Check if we're already on the Create Profile page
     if not create_profile_page.is_create_profile_page_loaded():
-        # Only navigate if we're not already on the page
+
         success = create_profile_page.navigate_to_create_profile_page()
         assert success, "Failed to navigate to Create Profile page"
         logger.info("Navigated to Create Profile page")
     else:
         logger.info("Already on Create Profile page, skipping navigation")
     
-    # Verify we're on the correct page
     assert create_profile_page.is_create_profile_page_loaded(), "Create Profile page not loaded properly"
     
-    # Test the submit button validation errors
     result = create_profile_page.test_submit_button_validation_errors()
     assert result, "Not all validation errors appeared when clicking submit button"
     

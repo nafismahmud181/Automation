@@ -16,10 +16,8 @@ class TestBatchEditorPage:
         """Test navigation to batch editor and verify add-count-button is present"""
         logger.info("Testing batch editor navigation and add-count-button presence")
         
-        # Navigate to the specific batch editor page
         batch_editor_page.navigate_to_batch_editor()
         
-        # Wait for page to load and verify add-count-button is present
         assert batch_editor_page.is_add_count_button_present(timeout=20), \
             "Add count button should be present on the batch editor page"
         
@@ -30,10 +28,6 @@ class TestBatchEditorPage:
         """Test that the add-count-button is clickable after navigation"""
         logger.info("Testing add-count-button clickability")
         
-        # Navigate to the batch editor page
-        # batch_editor_page.navigate_to_batch_editor()
-        
-        # Wait for the button to be clickable
         try:
             button = batch_editor_page.wait_for_add_count_button(timeout=20)
             assert button.is_enabled(), "Add count button should be enabled"

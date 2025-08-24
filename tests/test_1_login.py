@@ -45,26 +45,20 @@ class TestLogin:
       
       login_page.navigate_to_login()
       login_page.click_login_button()
-      
-      # Assert login should fail
+
       assert not login_page.is_login_successful(), "Login should fail with empty credentials"
-      
-      # Check for validation errors
+
       assert login_page.has_validation_errors(), "Validation errors should be displayed for empty fields"
-      
-      # Get specific validation error messages
+
       username_error = login_page.get_username_validation_error()
       password_error = login_page.get_password_validation_error()
-      
-      # Assert specific error messages
+
       assert username_error == "The Username field is required", f"Expected username error, got: {username_error}"
       assert password_error == "The Password field is required", f"Expected password error, got: {password_error}"
-      
-      # Log all errors found
+
       all_errors = login_page.get_all_validation_errors()
       logger.info(f"Validation errors displayed: {all_errors}")
-      
-      # Alternative: Use the general method to get any error
+
       any_error = login_page.get_any_error_message()
       logger.info(f"Any error message: {any_error}")
 
@@ -87,15 +81,13 @@ class TestLogin:
       logger.info("Testing login page title/heading")
       
       login_page.navigate_to_login()
-      
-      # Option 1: Test the page heading (h2 element)
+
       page_heading = login_page.get_page_heading()
       expected_heading = "Welcome to Data Definitions Editor"
       
       assert page_heading == expected_heading, f"Page heading should be '{expected_heading}', got: '{page_heading}'"
       logger.info(f"Login page heading validated: {page_heading}")
-      
-      # Option 2: Also test browser title if needed
+
       browser_title = login_page.get_page_title()
       logger.info(f"Browser title: {browser_title}")
 
@@ -106,11 +98,9 @@ class TestLogin:
         logger.info("Testing login page heading presence")
         
         login_page.navigate_to_login()
-        
-        # Check if heading element is present
+
         assert login_page.is_element_present(login_page.PAGE_TITLE), "Page heading should be present"
-        
-        # Check if heading text is not empty
+
         heading_text = login_page.get_page_heading()
         assert heading_text != "", "Page heading text should not be empty"
         assert "Data Definitions Editor" in heading_text, f"Heading should contain 'Data Definitions Editor', got: {heading_text}"

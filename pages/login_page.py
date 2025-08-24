@@ -6,7 +6,6 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 class LoginPage(BasePage):
-    # Existing locators
     USERNAME_INPUT = (By.XPATH, "//input[@id='login-username']")
     PASSWORD_INPUT = (By.XPATH, "//input[@id='login-password']")
     LOGIN_BUTTON = (By.XPATH, "//button[normalize-space()='Sign in']")
@@ -84,12 +83,11 @@ class LoginPage(BasePage):
     
     def get_any_error_message(self) -> str:
         """Get any error message (validation or general)"""
-        # Check validation errors first
+
         validation_errors = self.get_all_validation_errors()
         if validation_errors:
             return "; ".join(validation_errors)
-        
-        # Check general error message
+
         return self.get_error_message()
     
     def get_page_title_element_text(self) -> str:

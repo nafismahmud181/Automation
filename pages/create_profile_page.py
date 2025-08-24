@@ -25,7 +25,27 @@ class ProfileManagementPage(BasePage):
   # New locators for project status and manual validation
   PROJECT_IS_EMPTY = (By.XPATH, "//div[@data-id='profile-create project']//div[@class='vs__selected-options' and not(span[@class='vs__selected'])]")
   PROJECT_IS_SELECTED = (By.XPATH, "//div[@data-id='profile-create project']//div[@class='vs__selected-options']/span[@class='vs__selected']")
+  
+  # Switch locators
   MANUAL_VALIDATION_SWITCH = (By.XPATH, "//input[@data-id='profile-create manual-validation']")
+  MULTI_SHIPMENT_SWITCH = (By.XPATH, "//input[@data-id='profile-create multi-shipment']")
+  SEND_TIME_STAMP_SWITCH = (By.XPATH, "//input[@data-id='profile-create send-time-stamp']")
+  PARSE_DOCUMENT_SWITCH = (By.XPATH, "//input[@data-id='profile-create parse-document']")
+  IGNORE_DENSE_PAGES_SWITCH = (By.XPATH, "//input[@data-id='profile-create ignore-dense-pages']")
+  EXCEPTIONAL_EXCEL_SWITCH = (By.XPATH, "//input[@data-id='profile-create exceptional-excel']")
+
+  # Add these locators with the existing ones
+  SUBMIT_BUTTON = (By.XPATH, "//button[@data-id='profile-create submit']")
+
+  # Error locators for submit validation
+  CUSTOMER_NAME_ERROR = (By.XPATH, "//small[@data-id='customer-name-error']")
+  PROJECT_ERROR = (By.XPATH, "//small[@data-id='project-error']")
+  COUNTRY_CODE_ERROR = (By.XPATH, "//small[@data-id='country-code-error']")
+  TRANSPORT_ERROR = (By.XPATH, "//small[@data-id='transport-error']")
+  DOC_TYPE_ERROR = (By.XPATH, "//small[@data-id='doc-type-error']")
+  EMAIL_DOMAINS_ERROR = (By.XPATH, "//small[@data-id='email-domains-error']")
+  EMAIL_FROM_ERROR = (By.XPATH, "//small[@data-id='email-from-error']")
+  EMAIL_SUBJECT_TEXT_ERROR = (By.XPATH, "//small[@data-id='email-subject-text-error']")
 
   def __init__(self, driver):
     super().__init__(driver)
@@ -529,3 +549,272 @@ class ProfileManagementPage(BasePage):
     except Exception as e:
       print(f"Error in test_project_search_and_manual_validation_switch: {e}")
       return False
+    
+  def test_all_switches_toggle_functionality(self):
+    """Test that all 6 switches can be toggled on/off regardless of their initial state"""
+    try:
+        wait = WebDriverWait(self.driver, 10)
+        
+        # Define all switches with their names and locators
+        switches = [
+            ("Manual Validation", self.MANUAL_VALIDATION_SWITCH),
+            ("Multi Shipment", self.MULTI_SHIPMENT_SWITCH),
+            ("Send Time Stamp", self.SEND_TIME_STAMP_SWITCH),
+            ("Parse Document", self.PARSE_DOCUMENT_SWITCH),
+            ("Ignore Dense Pages", self.IGNORE_DENSE_PAGES_SWITCH),
+            ("Exceptional Excel", self.EXCEPTIONAL_EXCEL_SWITCH)
+        ]
+        
+        print("=" * 80)
+        print("TESTING ALL 6 SWITCHES TOGGLE FUNCTIONALITY")
+        print("=" * 80)
+        
+        failed_switches = []
+        
+        for switch_name, switch_locator in switches:
+            print(f"\n--- Testing {switch_name} Switch ---")
+            
+            try:
+                # Find the switch element
+                switch_element = wait.until(
+                    EC.presence_of_element_located(switch_locator)
+                )
+                
+                # Scroll the element into view
+                self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", switch_element)
+                time.sleep(1)
+                
+                # Get the initial state of the switch
+                initial_state = switch_element.is_selected()
+                print(f"Initial state of {switch_name}: {'ON' if initial_state else 'OFF'}")
+                
+                # First toggle: Change the state
+                success = self._toggle_switch(switch_element, switch_name)
+                if not success:
+                    failed_switches.append(f"{switch_name} - Failed to perform first toggle")
+                    continue
+                    
+                # Verify the state changed
+                time.sleep(1)  # Wait for UI to update
+                first_toggle_state = switch_element.is_selected()
+                
+                if first_toggle_state == initial_state:
+                    print(f"ERROR: {switch_name} state did not change after first toggle. Still: {'ON' if first_toggle_state else 'OFF'}")
+                    failed_switches.append(f"{switch_name} - State did not change after first toggle")
+                    continue
+                
+                print(f"After first toggle: {'ON' if first_toggle_state else 'OFF'} - State changed successfully")
+                
+                # Second toggle: Return to original state
+                success = self._toggle_switch(switch_element, switch_name)
+                if not success:
+                    failed_switches.append(f"{switch_name} - Failed to perform second toggle")
+                    continue
+                    
+                # Verify the state returned to original
+                time.sleep(1)  # Wait for UI to update
+                final_state = switch_element.is_selected()
+                
+                if final_state != initial_state:
+                    print(f"ERROR: {switch_name} did not return to original state. Expected: {'ON' if initial_state else 'OFF'}, Got: {'ON' if final_state else 'OFF'}")
+                    failed_switches.append(f"{switch_name} - Did not return to original state")
+                    continue
+                
+                print(f"After second toggle: {'ON' if final_state else 'OFF'} - Successfully returned to original state")
+                print(f"✅ {switch_name} switch toggle test PASSED")
+                
+            except TimeoutException:
+                print(f"❌ {switch_name} switch not found within timeout")
+                failed_switches.append(f"{switch_name} - Element not found")
+            except Exception as e:
+                print(f"❌ Error testing {switch_name} switch: {e}")
+                failed_switches.append(f"{switch_name} - Exception: {str(e)}")
+        
+        print("\n" + "=" * 80)
+        print("FINAL RESULTS")
+        print("=" * 80)
+        
+        if failed_switches:
+            print(f"❌ {len(failed_switches)} switches failed:")
+            for failure in failed_switches:
+                print(f"   - {failure}")
+            print(f"✅ {6 - len(failed_switches)} switches passed")
+            return False
+        else:
+            print("✅ All 6 switches toggle functionality tests PASSED!")
+            return True
+            
+    except Exception as e:
+        print(f"Error in test_all_switches_toggle_functionality: {e}")
+        return False
+
+  def _toggle_switch(self, switch_element, switch_name):
+    """Helper method to toggle a switch using multiple strategies - optimized for custom switches"""
+    try:
+        try:
+            self.driver.execute_script("arguments[0].click();", switch_element)
+            print(f"Successfully clicked {switch_name} switch using JavaScript click")
+            return True
+        except Exception as e:
+            print(f"JavaScript click failed on {switch_name} switch: {e}")
+        
+        try:
+            switch_id = switch_element.get_attribute("id")
+            if switch_id:
+                label = self.driver.find_element(By.XPATH, f"//label[@for='{switch_id}']")
+                label.click()
+                print(f"Successfully clicked {switch_name} switch label using normal click")
+                return True
+        except Exception as e:
+            print(f"Label click failed on {switch_name} switch: {e}")
+        
+        try:
+            switch_id = switch_element.get_attribute("id")
+            if switch_id:
+                label = self.driver.find_element(By.XPATH, f"//label[@for='{switch_id}']")
+                self.driver.execute_script("arguments[0].click();", label)
+                print(f"Successfully clicked {switch_name} switch label using JavaScript click")
+                return True
+        except Exception as e:
+            print(f"JavaScript label click failed on {switch_name} switch: {e}")
+        
+        try:
+            switch_element.click()
+            print(f"Successfully clicked {switch_name} switch using normal click")
+            return True
+        except Exception as e:
+            print(f"Normal click failed on {switch_name} switch: {e}")
+        
+        try:
+            actions = ActionChains(self.driver)
+            actions.move_to_element(switch_element).click().perform()
+            print(f"Successfully clicked {switch_name} switch using ActionChains")
+            return True
+        except Exception as e:
+            print(f"ActionChains click failed on {switch_name} switch: {e}")
+        
+        print(f"All click strategies failed for {switch_name} switch")
+        return False
+        
+    except Exception as e:
+        print(f"Error in _toggle_switch for {switch_name}: {e}")
+        return False
+    
+  # Add this method at the end of the class
+  def test_submit_button_validation_errors(self):
+    """Test that all validation errors appear when clicking submit button without filling required fields"""
+    try:
+        # First refresh the page
+        print("Refreshing the page...")
+        self.driver.refresh()
+        time.sleep(3)  # Wait for page to reload
+        
+        # Wait for the page to be fully loaded
+        wait = WebDriverWait(self.driver, 20)
+        
+        # Wait for submit button to be present and clickable
+        submit_button = wait.until(
+            EC.element_to_be_clickable(self.SUBMIT_BUTTON)
+        )
+        
+        print("Page refreshed, now clicking submit button...")
+        
+        # Scroll the submit button into view
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", submit_button)
+        time.sleep(1)
+        
+        # Click the submit button using multiple strategies
+        click_success = False
+        
+        # Strategy 1: Normal click
+        try:
+            submit_button.click()
+            click_success = True
+            print("Normal click successful on submit button")
+        except Exception as e:
+            print(f"Normal click failed: {e}")
+            
+            # Strategy 2: JavaScript click
+            try:
+                self.driver.execute_script("arguments[0].click();", submit_button)
+                click_success = True
+                print("JavaScript click successful on submit button")
+            except Exception as js_e:
+                print(f"JavaScript click failed: {js_e}")
+                
+                # Strategy 3: ActionChains click
+                try:
+                    actions = ActionChains(self.driver)
+                    actions.move_to_element(submit_button).click().perform()
+                    click_success = True
+                    print("ActionChains click successful on submit button")
+                except Exception as ac_e:
+                    print(f"ActionChains click failed: {ac_e}")
+        
+        if not click_success:
+            print("All click strategies failed for submit button")
+            return False
+        
+        time.sleep(3)  # Wait for validation errors to appear
+        
+        # Define all error elements to check
+        error_elements = [
+            ("Customer Name Error", self.CUSTOMER_NAME_ERROR),
+            ("Project Error", self.PROJECT_ERROR),
+            ("Country Code Error", self.COUNTRY_CODE_ERROR),
+            ("Transport Error", self.TRANSPORT_ERROR),
+            ("Doc Type Error", self.DOC_TYPE_ERROR),
+            ("Email Domains Error", self.EMAIL_DOMAINS_ERROR),
+            ("Email From Error", self.EMAIL_FROM_ERROR),
+            ("Email Subject Text Error", self.EMAIL_SUBJECT_TEXT_ERROR)
+        ]
+        
+        print("\n" + "=" * 80)
+        print("CHECKING VALIDATION ERRORS AFTER SUBMIT BUTTON CLICK")
+        print("=" * 80)
+        
+        displayed_errors = []
+        missing_errors = []
+        
+        for error_name, error_locator in error_elements:
+            try:
+                error_element = self.driver.find_element(*error_locator)
+                if error_element.is_displayed():
+                    print(f"✅ {error_name}: DISPLAYED")
+                    displayed_errors.append(error_name)
+                else:
+                    print(f"❌ {error_name}: PRESENT but NOT DISPLAYED")
+                    missing_errors.append(error_name)
+            except Exception as e:
+                print(f"❌ {error_name}: NOT FOUND - {e}")
+                missing_errors.append(error_name)
+        
+        print("\n" + "=" * 80)
+        print("VALIDATION ERRORS SUMMARY")
+        print("=" * 80)
+        print(f"Total errors displayed: {len(displayed_errors)}")
+        print(f"Total errors missing: {len(missing_errors)}")
+        
+        if displayed_errors:
+            print("\nDisplayed errors:")
+            for error in displayed_errors:
+                print(f"   - {error}")
+        
+        if missing_errors:
+            print("\nMissing errors:")
+            for error in missing_errors:
+                print(f"   - {error}")
+        
+        # Return True if all errors are displayed
+        all_errors_displayed = len(missing_errors) == 0
+        
+        if all_errors_displayed:
+            print("\n✅ All validation errors are displayed correctly!")
+        else:
+            print(f"\n❌ {len(missing_errors)} validation errors are missing!")
+        
+        return all_errors_displayed
+        
+    except Exception as e:
+        print(f"Error in test_submit_button_validation_errors: {e}")
+        return False  
